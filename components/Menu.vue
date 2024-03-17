@@ -41,6 +41,7 @@ import {menuItems} from '@/enums/enum'
   @include d-flex(row,space-around,center);
   border-bottom: 1px solid $gray1;
   gap: 4px;
+  background-color: $white1;
   @media (hover: hover) {
     &:hover{
       .menu-item-wrapper .menu-title{

@@ -14,3 +14,9 @@
 .p10{
   padding: 10px 12px;
 }
+
+.swiper-button-next, .swiper-button-prev{
+  &::after{
+    color:black;
+  }
+}
