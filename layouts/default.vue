@@ -1,6 +1,5 @@
 <template>
   <div class="page-wrapper">
-    <Menu/>
     <div class="content-wrapper" >
       <AppBar/>
       <div class="main-wrapper">
