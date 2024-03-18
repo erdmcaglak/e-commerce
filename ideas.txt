@@ -1,0 +1,6 @@
+//TODO i18n eklencek
+//TODO Icon komponenti yapılacak
+//TODO Menü rengi değiştirilecek ve xp görünümünden kurtulunacak
+//TODO Menü iyileştirmesi yapılacak
+//TODO Mobilde child menüler açılabilir yapılacak, açılabilir olanlarla arrow eklenecek
+//TODO attribute mapping (v-bind="item"). Response için map oluşturulup sadece item bilgisi yollanacak

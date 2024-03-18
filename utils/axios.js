@@ -3,7 +3,6 @@ import axios from "axios";
 const baseURL = 'https://dummyjson.com';
 const config = {
   baseURL: baseURL,
-  timeout: 20000,
 };
 
 const _axios = axios.create(config);

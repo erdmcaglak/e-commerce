@@ -1,6 +1,5 @@
 <script setup>
   //Home Page
-  import { Navigation } from 'swiper/modules';
   import {ref} from 'vue'
   const axios = useNuxtApp().$axios;
 
@@ -21,13 +20,14 @@
 
   const recRandom = async (i)=>{
     let {data} = await axios.get(`/products/${randomList[i]}`)
+    data.oldPrice = data.price + parseFloat(((data.price / 100) * Math.round(data.discountPercentage)).toFixed(2))
     sliderList.value.push(data);
     i++;
     if(randomList[i]){
       recRandom(i);
     }
   }
-  recRandom(0)
+  recRandom(0);
 
 </script>
 
@@ -36,21 +36,10 @@
     <NuxtLink to="/sale" class="hp-banner">
       <img src="/sales.jpg" alt="">
     </NuxtLink>
-    <div class="slider-wrapper">
-      <ClientOnly>
-        <Swiper
-          :modules="[Navigation]"
-          :slidesPerView="5"
-          :slidesPerGroup="4"
-          :loop="true"
-          navigation
-        >
-          <SwiperSlide v-for="slide in sliderList" :key="slide">
-            <strong>{{ slide?.title || 'aaaa' }}</strong>
-          </SwiperSlide>
-        </Swiper>
-      </ClientOnly>
-    </div>
+    <Slider 
+      sliderTitle="Sizin İçin Önerilenler"
+      :sliderList= "sliderList"
+      />
   </div>
   
 </template>
@@ -69,11 +58,6 @@
     img{
       width: 100%;
     }
-  }
-  .slider-wrapper{
-    padding: 10px 0;
-    width: 100%;
-    position: relative;
   }
 }
 </style>
