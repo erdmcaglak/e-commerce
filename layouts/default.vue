@@ -5,6 +5,7 @@
       <div class="main-wrapper">
         <slot></slot>
       </div>
+      <WebsiteFooter/>
     </div>
   </div>
 </template>

@@ -12,18 +12,52 @@
       default:''
     }
   })
+
+  const slidePerView = ref(5)
+  const slidePerGroup = ref(5)
+
+  const setOptions = () =>{
+    if(window.innerWidth<=480){
+      slidePerView.value = 1;
+      slidePerGroup.value = 1;
+    }
+    else if(window.innerWidth<=768){
+      slidePerView.value = 2;
+      slidePerGroup.value = 2;
+    }
+    else if(window.innerWidth<=1024){
+      slidePerView.value = 3;
+      slidePerGroup.value = 3;
+    }
+    else if(window.innerWidth<=1600){
+      slidePerView.value = 4;
+      slidePerGroup.value = 4;
+    }
+    else{
+      slidePerView.value = 5;
+      slidePerGroup.value = 5;
+    }
+  }
+
+  onMounted(() => {
+    setOptions();
+    window.addEventListener('resize',()=>{
+      setOptions()
+    })
+  })
 </script>
 
 <template>
-  <div class="slider-wrapper">
+  <div class="slider-wrapper container-main">
       <ClientOnly>
-        <h1 class="slider-title" v-if="props.sliderTitle">{{ sliderTitle }}</h1>
+        <h1 class="slider-title" v-if="props.sliderTitle">{{ props.sliderTitle }}</h1>
+        <!-- //!breakpoint çalışmıyor workaround uygulandı -->
         <Swiper
           :modules="[Navigation]"
-          :slidesPerView="5"
-          :slidesPerGroup="5"
+          :slidesPerView="slidePerView"
+          :slidesPerGroup="slidePerGroup"
           navigation
-          spaceBetween="10"
+          space-between="10" 
         >
           <SwiperSlide v-for="(item,i) in props.sliderList" :key="'specialSlider'+i">
             <Cart
@@ -44,14 +78,16 @@
 
 <style lang="scss">
 .slider-wrapper{
-  padding: 10px 0;
   width: 100%;
   position: relative;
-  max-width: 1600px;
-  margin: 20px auto;
+  min-height: 600px;
+  @include d-flex(column,center,flex-start);
   .slider-title{
     padding: 10px 0;
     margin-bottom: 5px;
+  }
+  .swiper-horizontal{
+    width: 100%;
   }
 }
 </style>

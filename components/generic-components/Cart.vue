@@ -43,7 +43,7 @@
   })
 
   const priceFixer = (price)=>{
-    return '₺ ' + parseFloat(price).toFixed(2).replace('.',',');
+    return '$' + parseFloat(price).toFixed(2).replace('.',',');
   } 
 
   const isHaveBadge = computed(() => {

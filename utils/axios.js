@@ -43,6 +43,6 @@ class AxiosWrapper {
   }
 }
 
-const wrapper = new AxiosWrapper();
+const axiosHolder = new AxiosWrapper();
 
-export default wrapper;
+export default axiosHolder;

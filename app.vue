@@ -13,6 +13,7 @@
   font-family: 'Roboto', sans-serif;
 }
 html,body,#__nuxt{
+  -webkit-tap-highlight-color: transparent;
   height: 100%;
   width: 100%;
   background-color: $white1;

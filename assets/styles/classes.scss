@@ -5,6 +5,14 @@
   border-radius: 99px;
 }
 
+.container-main{
+  margin: 0 auto;
+  max-width: 1600px;
+  @media screen and (max-width:1600px){
+    max-width: 1100px;
+  }
+}
+
 .p4{
   padding: 4px 6px;
 }

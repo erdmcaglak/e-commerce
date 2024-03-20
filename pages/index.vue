@@ -1,33 +1,16 @@
 <script setup>
   //Home Page
   import {ref} from 'vue'
+  import {getProducts} from '@/utils/utils'
   const axios = useNuxtApp().$axios;
 
-  const sliderList = ref([])
+  const recomendedForYou = ref([])
+  const shopTheLook = ref([])
+  const ourPicks = ref([])
 
-  const randomList = [];
-  const randomGenerator = () =>{
-    let randomNumber = Math.floor(Math.random() *100) +1
-    if(randomList.includes(randomNumber)){
-      randomGenerator();
-    }
-
-    randomList.push(randomNumber);
-
-    if(randomList.length < 15) randomGenerator();
-  }
-  randomGenerator();
-
-  const recRandom = async (i)=>{
-    let {data} = await axios.get(`/products/${randomList[i]}`)
-    data.oldPrice = data.price + parseFloat(((data.price / 100) * Math.round(data.discountPercentage)).toFixed(2))
-    sliderList.value.push(data);
-    i++;
-    if(randomList[i]){
-      recRandom(i);
-    }
-  }
-  recRandom(0);
+  recomendedForYou.value = await getProducts();
+  shopTheLook.value = await getProducts();
+  ourPicks.value = await getProducts();
 
 </script>
 
@@ -36,9 +19,20 @@
     <NuxtLink to="/sale" class="hp-banner">
       <img src="/sales.jpg" alt="">
     </NuxtLink>
-    <Slider 
-      sliderTitle="Sizin İçin Önerilenler"
-      :sliderList= "sliderList"
+    <Slider
+      sliderTitle="Recomended For You"
+      :sliderList= "recomendedForYou"
+      />
+    <LazyNuxtLink to="/clothes" class="hp-banner">
+      <img loading="lazy" src="/banner_2.png" alt=""/>
+    </LazyNuxtLink>
+    <Slider
+      sliderTitle="Shop The Look"
+      :sliderList= "shopTheLook"
+      />
+    <Slider
+      sliderTitle="Our Picks"
+      :sliderList= "ourPicks"
       />
   </div>
   
@@ -48,13 +42,13 @@
 .home-page{
   overflow: hidden;
   width: 100%;
-  height: 10000px;
   @include d-flex(column,flex-start,stretch);
   .hp-banner{
-    @include d-flex-center;
+    @include d-flex(row,center,flex-start);
     overflow: hidden;
     cursor: pointer;
     border-radius: 4px;
+    max-height: 800px;
     img{
       width: 100%;
     }

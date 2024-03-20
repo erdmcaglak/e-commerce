@@ -1,9 +1,9 @@
-import wrapper from '@/utils/axios'
+import axiosHolder from '@/utils/axios'
 
 export default defineNuxtPlugin(async ()=>{
   return{
     provide:{
-      axios:wrapper
+      axios:axiosHolder
     }
   }
 })
