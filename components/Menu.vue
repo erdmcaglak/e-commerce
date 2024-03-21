@@ -145,7 +145,6 @@ import {menuItems} from '@/enums/enum'
       border-top: 1px solid $gray1;
       left: 0;
       top: 100%;
-      border-radius: 0 0 4px 4px;
       @media screen and (max-width:768px){
         top: unset;
         left: unset;
@@ -153,7 +152,6 @@ import {menuItems} from '@/enums/enum'
       }
       .child-item-wrapper{
         text-align: left;
-        border-radius: 4px;
         position: relative;
         @media screen and (max-width:768px){
           border-radius: 0px;
@@ -184,7 +182,6 @@ import {menuItems} from '@/enums/enum'
         }
         .deep-menu-children{
           @extend .menu;
-          border-radius: 4px;
           top: -6px;
           &:not(:last-child){
             left: 100%;

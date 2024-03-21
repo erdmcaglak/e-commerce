@@ -5,3 +5,4 @@
 //TODO Mobilde child menüler açılabilir yapılacak, açılabilir olanlarla arrow eklenecek
 //TODO attribute mapping (v-bind="item"). Response için map oluşturulup sadece item bilgisi yollanacak
 //TODO HP deki bannerler responsive göre düzenlenecek (mobilde resimin sol tarafı gösterilecek)
+//TODO Sayfalarda scroll olduğunda sağ aşağıda yukarı yönlendirme butonu koyulacak

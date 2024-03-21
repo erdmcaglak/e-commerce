@@ -1,90 +1,103 @@
-<script>
-export default {
-  data(){
-    return{
-      footerItems:[
-        {main:'Product',items:[
-          'Pricing',
-          'Overview',
-          'Browse',
-          'Accessibility',
-          'Five'
-        ]},
-        {main:'Solutions',items:[
-          'Brainstorming',
-          'Ideation',
-          'Wireframing',
-          'Research',
-          'Design'
-        ]},
-        {main:'Support',items:[
-          'Contact Us',
-          'Developers',
-          'Documentation',
-          'Integrations',
-          'Reports'
-        ]},
-      ],
-      socialMedias:[
-        {title:'Youtube',icon:'youtube.svg',link:'https://www.youtube.com/@BaykarTechnologies'},
-        {title:'Facebook',icon:'facebook.svg',link:'https://www.facebook.com/BaykarTech/'},
-        {title:'Twitter',icon:'twitter.svg',link:'https://twitter.com/BaykarTech'},
-        {title:'Instagram',icon:'instagram.svg',link:'https://www.instagram.com/baykartech/'},
-        {title:'Linkedin',icon:'linkedin.svg',link:'https://www.linkedin.com/company/baykar/'},
-      ],
-      footerMenuItems:[
-        {title:'Terms'},
-        {title:'Privacy'},
-        {title:'Contact'},
-        {title:'En',icon:'world.svg'},
-      ]
-    }
-  }
-}
+<script setup>
+import {menuItems} from '@/enums/enum'
+import playStoreImage from '@/assets/images/google_play.svg'
+import appStoreImage from '@/assets/images/app_store.svg'
+
+const footerItems = menuItems.filter(e=>e.value!=='sale');
+
+const footerItems2=[
+  {main:'Product',items:[
+    'Pricing',
+    'Overview',
+    'Browse',
+    'Accessibility',
+    'Five'
+  ]},
+  {main:'Solutions',items:[
+    'Brainstorming',
+    'Ideation',
+    'Wireframing',
+    'Research',
+    'Design'
+  ]},
+  {main:'Support',items:[
+    'Contact Us',
+    'Developers',
+    'Documentation',
+    'Integrations',
+    'Reports'
+  ]},
+]
+const socialMedias=[
+  {title:'Github',icon:'mdi:github',src:'https://github.com/erdmcaglak'},
+  {title:'LinkedIn',icon:'mdi:linkedin',src:'https://www.linkedin.com/in/erdemcaglak/'},
+  {title:'Twitter',icon:'mdi:twitter',src:'https://twitter.com/_caglakErdem'},
+  {title:'Instagram',icon:'mdi:instagram',src:'https://www.instagram.com/erdemcaglak/'},
+  {title:'Youtube',icon:'mdi:youtube',src:'https://www.youtube.com/@erdemcaglak4573/featured'},
+]
+const footerMenuItems=[
+  {title:'Terms',src:'https://www.termsandcondiitionssample.com/'},
+  {title:'Privacy',src:'https://termly.io/resources/templates/privacy-policy-template/'},
+  {title:'Contact',src:'https://www.searchenginejournal.com/examples-contact-us-pages/378518/'},
+]
+
+const getAppList = [
+  {title:'App Store',value:'app-store',img:appStoreImage,src:'https://github.com/erdmcaglak'},
+  {title:'Play Store',value:'play-store',img:playStoreImage,src:'https://www.linkedin.com/in/erdemcaglak/'},
+]
 </script>
 
 <template>
   <div class="footer-main">
-    <div class="footer container-main">
-      <div class="button-area">
-        <div v-for="(item,i) in footerItems" :key="'buttonsGroup'+i" class="buttons-wrapper">
-          <div class="main">
-            {{item.main}}
+    <div class="footer-wrapper container-main">
+      <div class="footer-items-wrapper" v-for="(item,i) in footerItems" :key="'footerItemsWrapper'+i">
+        <template v-if="Object.prototype.hasOwnProperty.call(item,'children')">
+          <NuxtLink :to="item.route" class="footer-item-header generic-footer-headers">
+            {{ item.title }}
+          </NuxtLink>
+          <template v-for="(mainChildItem,k) in item.children" :key="'mainChildItem'+k">
+            <NuxtLink :to="mainChildItem.route" v-if="!Object.prototype.hasOwnProperty.call(mainChildItem,'children')" class="footer-item">
+              {{ mainChildItem.title }}
+            </NuxtLink>
+            <template v-else>
+              <template v-for="(childItem,j) in mainChildItem.children" :key="'childItem'+j">
+                <NuxtLink :to="childItem.route" class="footer-item" v-if="j<3">
+                  {{mainChildItem.title}} - {{ childItem.title }}
+                </NuxtLink>
+              </template>
+            </template>
+          </template>
+        </template>
+      </div>
+      <div class="get-app-area">
+        <div class="app-buttons">
+          <div class="get-app-header generic-footer-headers">
+            Get the App
           </div>
-          <div v-for="(lowItem,k) in item.items" :key="'lowItem'+k" class="items">
-            {{lowItem}}
-          </div>
+          <NuxtLink target="_blank" :to="item.src" class="store-image-wrapper" v-for="(item,i) in getAppList" :key="'storeImages'+i">
+            <img :src="item.img" :alt="item.title">
+          </NuxtLink>
         </div>
-        <div class="get-app">
-          <div class="app-buttons">
-            <div class="main">
-              Get the App
-            </div>
-            <div class="store">
-              <img class="select-none pointer-events-none" src="@/assets/images/app_store.svg" alt="">
-            </div>
-            <div class="store">
-              <img class="select-none pointer-events-none" src="@/assets/images/google_play.svg" alt="">
-            </div>
+        <div class="social-medias">
+          <div class="social-media-header generic-footer-headers">
+            Follow Us
           </div>
-          <div class="social-media">
-            <div class="main">
-              Follow Us
-            </div>
+          <div class="social-media-items-wrapper">
+            <NuxtLink target="_blank" :to="item.src" class="social-media-item" v-for="(item,i) in socialMedias" :key="'socialMedias'+i">
+              <Icon :name="item.icon" size="24"/>
+            </NuxtLink>
           </div>
         </div>
       </div>
-      <div class="terms">
-        <div class="copyright">
-          Collers @ 2023. All rights reserved.
-        </div>
-        <div class="footer-menus-wrapper">
-          <div v-for="(item,i) in footerMenuItems" :key="'fotterMenu'+i" class="footer-menu-items">
-            <div class="menu-text">
-              {{item.title}}
-            </div>
-          </div>  
-        </div>
+    </div>
+    <div class="terms container-main">
+      <div class="copyright">
+        Copyright © ArtisanZen & <span class="my-name">Erdem Çağlak</span>
+      </div>
+      <div class="footer-menus-wrapper">
+        <NuxtLink :to="item.src" target="_blank" v-for="(item,i) in footerMenuItems" :key="'fotterMenu'+i" class="footer-menu-items">
+          {{item.title}}
+        </NuxtLink>  
       </div>
     </div>
   </div>
@@ -93,107 +106,119 @@ export default {
 <style lang="scss">
   .footer-main{
     width: 100%;
-    background-color: #0F172A;
-    padding-bottom:30px;
-    .footer{
-      margin: 0 auto;
-      padding: 0 16px;
-      gap: 32px;
-      position: relative;
-      @include d-flex(column,flex-start,flex-start);
-      .button-area{
-        width: 100%;
-        @include d-flex(row,space-between,stretch);
-        border-bottom: 1px solid #334155;
-        padding: 48px 0;
-        @media screen and (max-width:639px) {
-          flex-direction: column;
-          gap: 48px;
-        }
-        .main{
-          font-size: 16px;
-          font-weight: 700;
-          color: $white1;
-          text-align: left;
-          padding: 12px;
-          cursor: pointer;
-          user-select: none;
-        }
-        .buttons-wrapper{
-          @include d-flex(column,flex-start,stretch);
-          flex: 1 0 0%;
-          @media screen and (max-width:639px) {
-            align-items: center;
-            gap: 48px;
-          }
-          .items{
-            font-size: 16px;
-            font-weight: 500;
-            color: $white7;
-            text-align: left;
-            padding: 12px;
-            cursor: pointer;
-            user-select: none;
-          }
-        }
-        .get-app{
-          @include d-flex(column,space-between,stretch);
-          flex: 1 0 0%;
-          @media screen and (max-width:639px) {
-            align-items: center;
-            gap: 56px;
-          }
-          .app-buttons{
-            @include d-flex(column,flex-start,stretch);
-            gap: 8px;
-            @media screen and (max-width:639px) {
-              align-items: center;
-            }
-            .store{
-              color: $white1;
-              border-radius: 8px;
-              @include d-flex(row,flex-start,center);
-              gap: 8px;
-              cursor: pointer;
-              user-select: none;
-            }
-          }
-          .social-media{
-            @include d-flex(column,flex-start,stretch);
-            @media screen and (max-width:639px) {
-              align-items: center;
-            }
-          }
-        }
+    background-color: $dark14;
+    padding: 30px;
+    .footer-wrapper{
+      @include d-flex(row,space-between,stretch);
+      border-bottom: 1px solid $white15;
+      padding-bottom: 20px;
+      gap: 10px;
+      @media screen and (max-width:768px) {
+        flex-wrap: wrap;
       }
-      .terms{
-        @include d-flex(row,space-between,center);
-        width: 100%;
-        @media screen and (max-width:639px) {
-          flex-direction: column;
-          gap: 24px;
+      @media screen and (max-width:480px) {
+        flex-direction: column;
+      }
+      .footer-items-wrapper{
+        @media screen and (max-width:480px) {
+          flex: 1 0 1px;
         }
-        .copyright{
+        @include d-flex(column,flex-start,flex-start);
+        .footer-item{
+          padding: 10px 0;
+          cursor: pointer;
           color: $white7;
           font-size: 16px;
-          font-weight: 500;
+          @media (hover: hover) {
+            &:hover{
+              text-decoration: underline;
+              color: $white4;
+            }
+          }
         }
-        .footer-menus-wrapper{
-          @include d-flex(row,flex-start,center);
-          gap: 32px;
-          .footer-menu-items{
-            @include d-flex-center;
-            gap: 8px;
-            .menu-text{
-              font-size: 16px;
-              color: $white7;
-              font-weight: 500;
+        .footer-item-header{
+          @extend .footer-item;          
+        }
+      }
+      .get-app-area{
+        gap: 30px;
+        @media screen and (max-width:768px){
+          align-content: flex-end;
+        }
+        @media screen and (max-width:480px) {
+          flex: 1 0 1px;
+        }
+        @include d-flex(column,space-between,flex-start);
+        .app-buttons{
+          @include d-flex(column,flex-start,flex-start);
+          gap: 10px;
+          .store-image-wrapper{
+            cursor: pointer;
+            img{
               user-select: none;
-              cursor: pointer;
+              pointer-events: none;
+            }
+          }
+        }
+        .social-medias{
+          @include d-flex(column,flex-start,flex-start);
+          .social-media-items-wrapper{
+            @include d-flex(row,flex-start,center);
+            gap: 4px;
+            @media (hover: hover) {
+              &:hover{
+                .social-media-item{
+                  color: $white9!important;
+                }
+              }
+            }
+            .social-media-item{
+              padding: 4px;
+              color: $white1!important;
+              transition: all .2s ease;
+              &:hover{
+                color: $white1!important;
+                transform: scale(1.1);
+              }
             }
           }
         }
       }
     }
+    .terms{
+      @include d-flex(row,space-between,center);
+      width: 100%;
+      padding: 20px 0;
+      
+      @media screen and (max-width:480px) {
+        flex-direction: column;
+        font-size: 14px;
+        gap: 10px;
+      }
+      .copyright{
+        color: $white4;
+        .my-name{
+          color: $dark_pink;
+          font-weight: 700;
+        }
+      }
+      .footer-menus-wrapper{
+        @include d-flex(row,flex-start,center);
+        gap: 20px;
+        .footer-menu-items{
+          text-align: center;
+          color: $white4;
+          user-select: none;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  .generic-footer-headers{
+    color: $white1!important;
+    font-weight: 700;
+    padding: 10px 0;
+    cursor: pointer;
+    font-size: 16px;
   }
 </style>
