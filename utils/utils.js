@@ -9,3 +9,20 @@ export const getProducts = async () =>{
 
   return res.data.products;
 }
+
+export const getRoute = (index,breadCrumbArr,startWith='/category')=>{
+  let _route = startWith;
+  for(let i=0;i<=index;i++){
+    _route += '/'+ breadCrumbArr[i]
+  }
+  return _route
+}
+
+export const kebabToCapitalize = (item)=>{
+  let splittedStr = item.split('-');
+  for(let i=0;i<splittedStr.length;i++){
+    let str = splittedStr[i];
+    splittedStr[i] = str.substring(0, 1).toUpperCase() + str.substring(1);
+  }
+  return splittedStr.join(' ');
+}

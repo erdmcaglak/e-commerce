@@ -58,10 +58,10 @@
     </div>
     <div class="cart-item-image-wrapper">
       <div class="first-image-wrapper">
-        <img :src="props.image" :alt="props.title">
+        <img loading="lazy" :src="props.image" :alt="props.title">
       </div>
       <div v-if="props.secondImage" class="second-image-wrapper">
-        <img class="second-image" :src="props.secondImage" :alt="props.title">
+        <img loading="lazy" class="second-image" :src="props.secondImage" :alt="props.title">
       </div>
     </div>
     <div class="cart-info-wrapper px8">

@@ -6,3 +6,7 @@
 //TODO attribute mapping (v-bind="item"). Response için map oluşturulup sadece item bilgisi yollanacak
 //TODO HP deki bannerler responsive göre düzenlenecek (mobilde resimin sol tarafı gösterilecek)
 //TODO Sayfalarda scroll olduğunda sağ aşağıda yukarı yönlendirme butonu koyulacak
+//TODO Main logoya redirect eklenecek
+//TODO 404 page yapılacak
+//TODO SearchBox yapılacak
+//TODO Hoverlar @media ile kapsancak

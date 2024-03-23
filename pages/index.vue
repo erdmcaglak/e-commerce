@@ -16,14 +16,14 @@
 
 <template>
   <div class="home-page">
-    <NuxtLink to="/sale" class="hp-banner">
+    <NuxtLink to="/category/sale" class="hp-banner">
       <img src="/sales.jpg" alt="">
     </NuxtLink>
     <Slider
       sliderTitle="Recomended For You"
       :sliderList= "recomendedForYou"
       />
-    <LazyNuxtLink to="/clothes" class="hp-banner">
+    <LazyNuxtLink to="/category/clothes" class="hp-banner">
       <img loading="lazy" src="/banner_2.png" alt=""/>
     </LazyNuxtLink>
     <Slider
