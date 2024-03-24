@@ -3,9 +3,6 @@ import {menuItems} from '@/enums/enum'
 </script>
 
 <template>
-  <!-- //TODO Menü rengi değiştirilecek ve xp görünümünden kurtulunacak -->
-  <!-- //TODO Menü iyileştirmesi yapılacak -->
-  <!-- //TODO Mobilde child menüler açılabilir yapılacak, açılabilir olanlarla arrow eklenecek -->
   <ul class="menu-wrapper">
     <li v-for="(item,i) in menuItems" :key="'menuItem'+i" class="menu-item-wrapper">
       <NuxtLink 

@@ -132,9 +132,10 @@
         }
       }
       .hamburger-wrapper{
-        @media screen and (min-width:768px) {
-          display: none;
+        @media screen and (max-width:768px) {
+          display: block;
         }
+        display: none;
         padding: 6px;
         cursor: pointer;
         user-select: none;

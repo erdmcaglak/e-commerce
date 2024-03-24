@@ -52,35 +52,38 @@
 </script>
 
 <template>
-  <div class="cart-item-wrapper">
-    <div v-if="props.discount" class="cart-item-badge">
-      %{{ Math.round(props.discount) }}
-    </div>
-    <div class="cart-item-image-wrapper">
-      <div class="first-image-wrapper">
-        <img loading="lazy" :src="props.image" :alt="props.title">
+  <ClientOnly>
+    <div class="cart-item-wrapper">
+      <div v-if="props.discount && props.oldPrice" class="cart-item-badge">
+        %{{ Math.round(props.discount) }}
       </div>
-      <div v-if="props.secondImage" class="second-image-wrapper">
-        <img loading="lazy" class="second-image" :src="props.secondImage" :alt="props.title">
-      </div>
-    </div>
-    <div class="cart-info-wrapper px8">
-      <div class="cart-item-brand">
-        <p><b>{{ props.brand }}</b></p>
-      </div>
-      <div class="cart-item-title">
-        <p>{{ props.title }}</p>
-      </div>
-      <div class="cart-item-price-wrapper">
-        <div v-if="props.oldPrice" class="old-price">
-          {{ priceFixer(props.oldPrice) }}
+      <div class="cart-item-image-wrapper">
+        <div class="first-image-wrapper">
+          <img loading="lazy" :src="props.image" :alt="props.title">
         </div>
-        <div :class="['price',props.oldPrice? 'color-red' : '']">
-          {{ priceFixer(props.price) }}
+        <div v-if="props.secondImage" class="second-image-wrapper">
+          <img loading="lazy" class="second-image" :src="props.secondImage" :alt="props.title">
         </div>
       </div>
+      <div class="cart-info-wrapper px8">
+        <div class="cart-item-brand">
+          <p><b>{{ props.brand }}</b></p>
+        </div>
+        <div class="cart-item-title">
+          <p>{{ props.title }}</p>
+        </div>
+        <div class="cart-item-price-wrapper">
+          <div v-if="props.oldPrice" class="old-price">
+            {{ priceFixer(props.oldPrice) }}
+          </div>
+          <div :class="['price',props.oldPrice? 'color-red' : '']">
+            {{ priceFixer(props.price) }}
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+  </ClientOnly>
+  
 </template>
 
 <style lang="scss" scoped>
@@ -162,7 +165,8 @@
     }
   }
   .cart-info-wrapper{
-    @include d-flex(column,flex-start,flex-start);
+    @include d-flex(column,flex-start,stretch);
+    width: 100%;
     margin-top: 6px;
     gap: 4px;
     .cart-item-brand{
@@ -170,7 +174,8 @@
       height: 20px;
       @include d-flex(row,flex-start,center);
       p{
-        font-size: 22px;
+        width: 100%;
+        font-size: 18px;
         color: $dark10;
         text-align: left;
       }
@@ -180,12 +185,13 @@
       cursor: pointer;
       @extend .cart-item-brand;
       min-height: 50px;
+      @include d-flex(row,flex-start,flex-start);
       &:hover{
         text-decoration: underline;
       }
       p{
         color: $dark10;
-        font-size: 20px;
+        font-size: 16px;
       }
     }
     .cart-item-price-wrapper{

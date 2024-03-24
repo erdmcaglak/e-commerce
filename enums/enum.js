@@ -1,9 +1,15 @@
-export const _menuItems=[
-  {title:'Github',value:'github',address:'https://github.com/erdmcaglak/',icon:'mdi:github'},
-  {title:'Instagram',value:'instagram',address:'https://instagram.com/erdemcaglak/',icon:'mdi:instagram'},
-  {title:'Linkedin',value:'linkedin',address:'https://www.linkedin.com/in/erdemcaglak/',icon:'mdi:linkedin'},
-  {title:'Spotify',value:'spotify',address:'https://open.spotify.com/user/11148043928?si=0bd8787afb5244a9',icon:'mdi:spotify'},
-  {title:'Twitter',value:'twitter',address:'https://twitter.com/_caglakErdem',icon:'mdi:twitter'},
+export const socialMedias=[
+  {title:'Github',icon:'mdi:github',src:'https://github.com/erdmcaglak'},
+  {title:'LinkedIn',icon:'mdi:linkedin',src:'https://www.linkedin.com/in/erdemcaglak/'},
+  {title:'Twitter',icon:'mdi:twitter',src:'https://twitter.com/_caglakErdem'},
+  {title:'Instagram',icon:'mdi:instagram',src:'https://www.instagram.com/erdemcaglak/'},
+  {title:'Youtube',icon:'mdi:youtube',src:'https://www.youtube.com/@erdemcaglak4573/featured'},
+]
+
+export const footerMenuItems=[
+  {title:'Terms',src:'https://www.termsandcondiitionssample.com/'},
+  {title:'Privacy',src:'https://termly.io/resources/templates/privacy-policy-template/'},
+  {title:'Contact',src:'https://www.searchenginejournal.com/examples-contact-us-pages/378518/'},
 ]
 
 export const menuItems=[

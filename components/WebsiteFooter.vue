@@ -1,45 +1,9 @@
 <script setup>
-import {menuItems} from '@/enums/enum'
+import {menuItems,socialMedias,footerMenuItems} from '@/enums/enum'
 import playStoreImage from '@/assets/images/google_play.svg'
 import appStoreImage from '@/assets/images/app_store.svg'
 
 const footerItems = menuItems.filter(e=>e.value!=='sale');
-
-const footerItems2=[
-  {main:'Product',items:[
-    'Pricing',
-    'Overview',
-    'Browse',
-    'Accessibility',
-    'Five'
-  ]},
-  {main:'Solutions',items:[
-    'Brainstorming',
-    'Ideation',
-    'Wireframing',
-    'Research',
-    'Design'
-  ]},
-  {main:'Support',items:[
-    'Contact Us',
-    'Developers',
-    'Documentation',
-    'Integrations',
-    'Reports'
-  ]},
-]
-const socialMedias=[
-  {title:'Github',icon:'mdi:github',src:'https://github.com/erdmcaglak'},
-  {title:'LinkedIn',icon:'mdi:linkedin',src:'https://www.linkedin.com/in/erdemcaglak/'},
-  {title:'Twitter',icon:'mdi:twitter',src:'https://twitter.com/_caglakErdem'},
-  {title:'Instagram',icon:'mdi:instagram',src:'https://www.instagram.com/erdemcaglak/'},
-  {title:'Youtube',icon:'mdi:youtube',src:'https://www.youtube.com/@erdemcaglak4573/featured'},
-]
-const footerMenuItems=[
-  {title:'Terms',src:'https://www.termsandcondiitionssample.com/'},
-  {title:'Privacy',src:'https://termly.io/resources/templates/privacy-policy-template/'},
-  {title:'Contact',src:'https://www.searchenginejournal.com/examples-contact-us-pages/378518/'},
-]
 
 const getAppList = [
   {title:'App Store',value:'app-store',img:appStoreImage,src:'https://github.com/erdmcaglak'},

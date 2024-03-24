@@ -10,3 +10,4 @@
 //TODO 404 page yapılacak
 //TODO SearchBox yapılacak
 //TODO Hoverlar @media ile kapsancak
+//TODO her sayfa için loading template oluşturulacak
