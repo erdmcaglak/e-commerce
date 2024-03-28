@@ -28,18 +28,16 @@ export const menuItems=[
   ]},
   {title:'Clothes',value:'clothes',route:'/category/clothes',children:[
     {title:'Women',value:'women',route:'/category/clothes/women',children:[
-      {title:'Dresses',value:'womens-dresses',route:'/category/clothes/women/dresses'},
-      {title:'Shoes',value:'womens-shoes',route:'/category/clothes/women/shoes'},
-      {title:'Watches',value:'womens-watches',route:'/category/clothes/women/watches'},
-      {title:'Bags',value:'womens-bags',route:'/category/clothes/women/bags'},
-      {title:'Jewellery',value:'womens-jewellery',route:'/category/clothes/women/jewellery'},
-      {title:'Sunglasses',value:'sunglasses',route:'/category/clothes/women/sunglasses'},
+      {title:'Dresses',value:'womens-dresses',route:'/category/clothes/womens/dresses'},
+      {title:'Shoes',value:'womens-shoes',route:'/category/clothes/womens/shoes'},
+      {title:'Watches',value:'womens-watches',route:'/category/clothes/womens/watches'},
+      {title:'Bags',value:'womens-bags',route:'/category/clothes/womens/bags'},
+      {title:'Jewellery',value:'womens-jewellery',route:'/category/clothes/womens/jewellery'},
     ]},
     {title:'Men',value:'men',route:'/category/clothes/men',children:[
-      {title:'Shirts',value:'mens-shirts',route:'/category/clothes/men/shirts'},
-      {title:'Shoes',value:'mens-shoes',route:'/category/clothes/men/shoes'},
-      {title:'Watches',value:'mens-watches',route:'/category/clothes/men/watches'},
-      {title:'Sunglasses',value:'sunglasses',route:'/category/clothes/men/sunglasses'},
+      {title:'Shirts',value:'mens-shirts',route:'/category/clothes/mens/shirts'},
+      {title:'Shoes',value:'mens-shoes',route:'/category/clothes/mens/shoes'},
+      {title:'Watches',value:'mens-watches',route:'/category/clothes/mens/watches'},
     ]},
   ]},
   {title:'Sale',value:'sale',route:'/category/sale',children:[
@@ -47,5 +45,14 @@ export const menuItems=[
     {title:'Groceries',value:'groceries',route:'/category/sale/groceries'},
     {title:'Automotive',value:'automotive',route:'/category/sale/automotive'},
     {title:'Motorcycle',value:'motorcycle',route:'/category/sale/motorcycle'},
+    {title:'Sunglasses',value:'sunglasses',route:'/category/sale/sunglasses'},
   ]},
+]
+
+export const sortByItems = [
+  {title:'Popularity',value:'popularity',sortKey:'rating',type:'desc'},
+  {title:'Price Low to High',value:'price-low-to-high',sortKey:'price',type:'asc'},
+  {title:'Price High to Low',value:'price-high-to-low',sortKey:'price',type:'desc'},
+  {title:'Name A-Z',value:'name-a-z',sortKey:'title',type:'asc'},
+  {title:'Name Z-A',value:'name-z-a',sortKey:'title',type:'desc'},
 ]

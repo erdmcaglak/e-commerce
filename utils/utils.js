@@ -14,13 +14,13 @@ const _findCategory = (category,arr) =>{
       }
     }
   }
-  return;
+  return undefined;
 }
 
 const _getAccessableCategories = (category) =>{
   const resArr = [];
   const recursiveFunc = (obj) =>{
-    if(Object.prototype.hasOwnProperty.call(obj,'children')){
+    if(obj && Object.prototype.hasOwnProperty.call(obj,'children')){
       for(let item of obj.children){
         if(Object.prototype.hasOwnProperty.call(item,'children')){
           recursiveFunc(item);
@@ -45,11 +45,13 @@ const _setProductsLength = (arr) =>{
     }
     return tempArr;
   }
-  return multipleArr(arr);
+  if(arr.length > 0) return multipleArr(arr);
+
+  return undefined
 }
 
 const _setOldPrice = (prods) =>{
-  prods.forEach(item=>{
+  prods?.forEach(item=>{
     item.randomImageIndex = Math.floor(Math.random()*item.images.length);
     item.oldPrice = item.price + parseFloat(((item.price / 100) * Math.round(item.discountPercentage)).toFixed(2))
   })
@@ -81,12 +83,21 @@ export const kebabToCapitalize = (item)=>{
 
 export const getCategoryProducts = async (category)=>{
   const categories = _getAccessableCategories(category);
-  const resultArr = []
-  for(let category of categories){
-    const res = await axiosHolder.get(`/products/category/${category}`);
+  const resultArr = [];
 
+  if(categories.length === 0){
+    const res = await axiosHolder.get(`/products/category/${category}`);
+  
     resultArr.push(...res.data.products)
   }
+  else{
+    for(let _category of categories){
+      const res = await axiosHolder.get(`/products/category/${_category}`);
+  
+      resultArr.push(...res.data.products)
+    }
+  }
+  
 
   return _setOldPrice(_setProductsLength(resultArr));
 }

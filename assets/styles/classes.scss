@@ -13,6 +13,13 @@
   }
 }
 
+.hide{
+  display: none!important;
+  opacity: 0!important;
+  height: 0px!important;
+  overflow: hidden!important;
+}
+
 .p4{
   padding: 4px 6px;
 }
