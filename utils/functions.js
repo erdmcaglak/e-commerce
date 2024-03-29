@@ -13,6 +13,7 @@ export const getBrandFilterItems = (items,key) =>{
       checkBoxHolder:false,
     })
   }
+  resArr.sort((a,b)=>b.count - a.count)
   return resArr;
 }
 
@@ -34,6 +35,14 @@ export const getPriceFilterItems = (items,div) =>{
       checkBoxHolder:false,
     })
   }
+
+  resArr.unshift({
+    min:0,
+    max:parseFloat((Math.round((min)*100)/100).toFixed(2)),
+    title: `< $${min}`,
+    count:items.filter(e=>e.price>0 && e.price <=min)?.length,
+    checkBoxHolder:false,
+  })
 
   return resArr;
 }

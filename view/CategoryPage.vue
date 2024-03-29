@@ -16,10 +16,10 @@
   const activeFiltersList = ref([])
   const includedFilters = ref([]);
 
-  const filtersArray = [
+  const filtersArray = ref([
     {title:'Brand',value:'brand',children:getBrandFilterItems(categoryProducts,'brand')},
     {title:'Price',value:'price',children:getPriceFilterItems(categoryProducts,5)},
-  ]
+  ])
 
   const productsSort = (key,type) =>{
     filteredCategoryProducts.value.sort((a,b)=>{
@@ -44,6 +44,7 @@
 
   const setDefaultProducts = () =>{
     filteredCategoryProducts.value = [...categoryProducts];
+    productHolder.value = [...categoryProducts]
   }
 
   const sortAllProducts = () =>{
@@ -69,37 +70,57 @@
     }
   }
 
-  const applyFilter = (filter) =>{
-    if(Object.prototype.hasOwnProperty.call(filter,'min')){
-      return categoryProducts.filter(e=>e.price>filter.min && e.price<=filter.max)
-    }
-    else{
-      return categoryProducts.filter(e=>e.brand === filter.value)
-    }
-  }
-
   const applyAllFilter = () =>{
+    let filterControl = includedFilters.value.map(e=>e.val).filter(e=>e);
+    let uniq = [...new Set(filterControl)].filter(e=>e);
+    let grouppedArr = [];
     filteredCategoryProducts.value.splice(0);
-    for(let filter of includedFilters.value){
-      let filteredArr = applyFilter(filter);
-      filteredCategoryProducts.value.push(...filteredArr)
+    productHolder.value = [...categoryProducts]
+
+    for(let filterItem of uniq){
+      let tempArr = []
+      for(let filter of includedFilters.value){
+        if(filter.val === filterItem){
+          tempArr.push(filter);
+        }
+      }
+      grouppedArr.push(tempArr);
     }
-    if(includedFilters.value.length === 0){
+
+    const connectWithOr = (filterArr,secondArr) =>{
+      let tempArr = []
+      for(let item of filterArr){
+        if(Object.prototype.hasOwnProperty.call(item.filter,'min')){
+          tempArr.push(...secondArr.filter(e=>e.price>item.filter.min && e.price<=item.filter.max))
+        }
+        else{
+          tempArr.push(...secondArr.filter(e=>e.brand === item.filter.value))
+        }
+      }
+      return tempArr;
+    }
+
+    for(let filterArr of grouppedArr){
+      productHolder.value = connectWithOr(filterArr,productHolder.value);
+    }
+
+    filteredCategoryProducts.value = productHolder.value
+
+    if(grouppedArr.length === 0){
       setDefaultProducts();
     }
-    productHolder.value = filteredCategoryProducts.value;
   }
 
   const addFilter = (filter,item,i) =>{
-    if(!!includedFilters.value.find(e=>e.title === filter.title)){
-      includedFilters.value.splice(includedFilters.value.findIndex(e=>e.title === filter.title),1);
+    if(!!includedFilters.value.find(e=>e.filter.title === filter.title)){
+      includedFilters.value.splice(includedFilters.value.findIndex(e=>e.filter.title === filter.title),1);
       item.children.splice(i,1);
       item.children.find(e=>e.title === filter.title).checkBoxHolder = false;  
     }else{
       filter.checkBoxHolder = true;
       let temp = {...filter}
       temp.isFake = true;
-      includedFilters.value.push(filter);
+      includedFilters.value.push({val:item.value,filter});
       item.children.unshift(temp);
     }
     applyAllFilter()
@@ -108,8 +129,7 @@
 </script>
 
 <template>
-  <div class="category-wrapper">
-    <div class="category-container container-main">
+  <div class="category-container container-main">
       <Breadcrumb/>
       <h1 class="category-name">
         {{ kebabToCapitalize(breadCrumbArr.at(-1)) }}
@@ -128,7 +148,7 @@
                 </div>
                 <div :class="['filter-item-children-wrapper',activeFiltersList.includes(item.value) ? 'open' : '']">
                   <template v-for="(filter,k) in item.children" :key="'filterChild'+k+i">
-                    <div :class="['filter-item-children',includedFilters.find(e=>e.title === filter.title) ? 'included':'',filter.checkBoxHolder && !filter.isFake ? 'hide' : '']" @change="addFilter(filter,item,k)">
+                    <div v-if="filter.count" :class="['filter-item-children',includedFilters.find(e=>e.filter.title === filter.title) ? 'included':'',filter.checkBoxHolder && !filter.isFake ? 'hide' : '']" @change="addFilter(filter,item,k)">
                       <input v-model="filter.checkBoxHolder" class="filter-checkbox" type="checkbox" :id="'filterCheckbox'+k+i">
                       <label :class="filter.checkBoxHolder ? 'selected-checkbox' : ''" :for="'filterCheckbox'+k+i">
                         <span class="filter-title name">{{ filter.title }}</span>
@@ -136,7 +156,6 @@
                       </label>
                     </div>
                   </template>
-                  
                 </div>
               </div>
             </div>
@@ -158,28 +177,33 @@
             </div>
           </div>
           <div class="category-products-content">
-            <template v-for="(item,i) in filteredCategoryProducts" :key="'categoryProds'+i">
-              <Cart
-                :image="getImage(item)"
-                :secondImage="item.images[1] || ''"
-                :brand="item.brand || ''"
-                :title="item.title"
-                :price="item.price"
-                :oldPrice="item.oldPrice || 0"
-                :discount="item.discountPercentage || 1"
-                :productId="item.id.toString()"
-              />
+            <template v-if="filteredCategoryProducts.length > 0">
+              <template v-for="(item,i) in filteredCategoryProducts" :key="'categoryProds'+i">
+                <Cart
+                  :image="getImage(item)"
+                  :secondImage="item.images[1] || ''"
+                  :brand="item.brand || ''"
+                  :title="item.title"
+                  :price="item.price"
+                  :oldPrice="item.oldPrice || 0"
+                  :discount="item.discountPercentage || 1"
+                  :productId="item.id.toString()"
+                />
+              </template>
+            </template>
+            <template v-else>
+              <div class="no-data-found">
+                There are no products available.
+              </div>
             </template>
           </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
 <style lang="scss">
-.category-wrapper{
-  .category-container{
+.category-container{
     @include d-flex(column,flex-start,stretch);
     .category-name{
       border-top: 1px solid $dark5;
@@ -190,8 +214,14 @@
     }
     .category-products-wrapper{
       @include d-flex(row,flex-start,stretch);
+      @media screen and (max-width:1024px) {
+        flex-direction: column;
+      }
       .filter-wrapper{
         flex: 1.5 0 1px;
+        @media screen and (max-width:1600px) {
+          flex: 2 0 1px;
+        }
         @include d-flex(column,flex-start,flex-start);
         .sticky-filter{
           padding-top: 20px;
@@ -267,7 +297,7 @@
                     width: inherit;
                     display: block;
                     -webkit-text-size-adjust: none;
-                    // max-width: 100px;
+                    max-width: 100px;
                   }
                   .filter-checkbox{
                     padding: 0;
@@ -323,8 +353,15 @@
       .category-products{
         @include d-flex(column,flex-start,stretch);
         flex: 8.5 0 1px;
+        @media screen and (max-width:1600px) {
+          flex: 8 0 1px;
+        }
         .category-products-sort{
           @include d-flex(row,space-between,center);
+          @media screen and (max-width:1024px) {
+            padding-left: 0;
+            padding-right: 0;
+          }
           .sort-select-box{
             padding: 6px 4px;
             font-size: 12px;
@@ -350,6 +387,7 @@
           }
         }
         .category-products-content{
+          position: relative;
           padding: 10px;
           width: 100%;
           display: grid;
@@ -358,9 +396,26 @@
           @media screen and (max-width: 1600px) {
             grid-template-columns: repeat(3, 1fr);
           }
+          @media screen and (max-width:1024px) {
+            padding-left: 0;
+            padding-right: 0;
+          }
+          @media screen and (max-width:768px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          @media screen and (max-width:480px){
+            grid-template-columns: repeat(1, 1fr);
+          }
+          .no-data-found{
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: $gray10;
+          }
         }
       }
     }
-  }
 }
 </style>

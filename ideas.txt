@@ -12,3 +12,5 @@
 //TODO Hoverlar @media ile kapsancak
 //TODO her sayfa için loading template oluşturulacak
 //TODO kategori sayfasında ürün olmazsa 'no data found' yazısı eklenecek
+//TODO herhangi bir sayfada filtre uygulandığında path'e query olarak eklenecek ve query'e göre de filtre uygulanabilecek
+//TODO filtrelerde arama yapılabilinecek

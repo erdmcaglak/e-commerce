@@ -127,6 +127,11 @@
     height: 300px;
     position: relative;
     overflow: hidden;
+    @media screen and (max-width:768px) {
+      max-height: 200px;
+      min-height: 200px;
+      height: 200px;
+    }
     &:hover{
       .second-image-wrapper{
         z-index: 1;
