@@ -53,7 +53,7 @@
 
 <template>
   <ClientOnly>
-    <div class="cart-item-wrapper">
+    <NuxtLink :to="'/product/'+props.productId" class="cart-item-wrapper">
       <div v-if="props.discount && props.oldPrice" class="cart-item-badge">
         %{{ Math.round(props.discount) }}
       </div>
@@ -81,7 +81,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </NuxtLink>
   </ClientOnly>
   
 </template>
@@ -176,8 +176,12 @@
     gap: 4px;
     .cart-item-brand{
       text-transform: capitalize;
-      height: 20px;
+      height: 45px;
       @include d-flex(row,flex-start,center);
+       display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
       p{
         width: 100%;
         font-size: 18px;

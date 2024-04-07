@@ -1,9 +1,14 @@
 <script setup>
   import {getRoute,kebabToCapitalize} from '@/utils/utils'
   const route = useRoute()
-  
-  const {mainCategory,category,childCategory} = route.params
-  const breadCrumbArr = [mainCategory,category,childCategory].filter(e=>e)
+
+  const props = defineProps({
+    categoryArr:{
+      type:Array,
+      required:true
+    }
+  })
+  const breadCrumbArr = props.categoryArr.filter(e=>e)
   
 </script>
 

@@ -14,8 +14,8 @@ export const footerMenuItems=[
 
 export const menuItems=[
   {title:'Electronics',value:'electronics',route:'/category/electronics',children:[
-    {title:'Smart Phones',value:'smartphones',route:'/category/electronics/smartphones'},
-    {title:'Laptops',value:'laptops',route:'/category/electronics/laptops'},
+    {title:'Smart Phones',value:'smartphones',route:'/category/electronics/smartphones',options:['color']},
+    {title:'Laptops',value:'laptops',route:'/category/electronics/laptops',options:['color']},
   ]},
   {title:'Personal Care',value:'personal-care',route:'/category/personal-care',children:[
     {title:'Fragrances',value:'fragrances',route:'/category/furniture-home/fragrances'},
@@ -23,29 +23,29 @@ export const menuItems=[
   ]},
   {title:'Furniture & Home',value:'furniture-home',route:'/category/furniture-home',children:[
     {title:'Home Decoration',value:'home-decoration',route:'/category/furniture-home/home-decoration'},
-    {title:'Lighting',value:'lighting',route:'/category/furniture-home/lighting'},
-    {title:'Furtinure',value:'furniture',route:'/category/furniture-home/furniture'},
+    {title:'Lighting',value:'lighting',route:'/category/furniture-home/lighting',options:['color']},
+    {title:'Furtinure',value:'furniture',route:'/category/furniture-home/furniture',options:['color']},
   ]},
   {title:'Clothes',value:'clothes',route:'/category/clothes',children:[
     {title:'Women',value:'women',route:'/category/clothes/women',children:[
-      {title:'Dresses',value:'womens-dresses',route:'/category/clothes/womens/dresses'},
-      {title:'Shoes',value:'womens-shoes',route:'/category/clothes/womens/shoes'},
-      {title:'Watches',value:'womens-watches',route:'/category/clothes/womens/watches'},
-      {title:'Bags',value:'womens-bags',route:'/category/clothes/womens/bags'},
+      {title:'Dresses',value:'womens-dresses',route:'/category/clothes/womens/dresses',options:['default','color']},
+      {title:'Shoes',value:'womens-shoes',route:'/category/clothes/womens/shoes',options:['number','color']},
+      {title:'Watches',value:'womens-watches',route:'/category/clothes/womens/watches',options:['color']},
+      {title:'Bags',value:'womens-bags',route:'/category/clothes/womens/bags',options:['color']},
       {title:'Jewellery',value:'womens-jewellery',route:'/category/clothes/womens/jewellery'},
     ]},
-    {title:'Men',value:'men',route:'/category/clothes/men',children:[
-      {title:'Shirts',value:'mens-shirts',route:'/category/clothes/mens/shirts'},
-      {title:'Shoes',value:'mens-shoes',route:'/category/clothes/mens/shoes'},
-      {title:'Watches',value:'mens-watches',route:'/category/clothes/mens/watches'},
+    {title:'Men',value:'mens',route:'/category/clothes/men',children:[
+      {title:'Shirts',value:'mens-shirts',route:'/category/clothes/mens/shirts',options:['default','color']},
+      {title:'Shoes',value:'mens-shoes',route:'/category/clothes/mens/shoes',options:['number','color']},
+      {title:'Watches',value:'mens-watches',route:'/category/clothes/mens/watches',options:['color']},
     ]},
   ]},
   {title:'Sale',value:'sale',route:'/category/sale',children:[
-    {title:'Tops',value:'tops',route:'/category/sale/tops'},
+    {title:'Tops',value:'tops',route:'/category/sale/tops',options:['default','color']},
     {title:'Groceries',value:'groceries',route:'/category/sale/groceries'},
-    {title:'Automotive',value:'automotive',route:'/category/sale/automotive'},
-    {title:'Motorcycle',value:'motorcycle',route:'/category/sale/motorcycle'},
-    {title:'Sunglasses',value:'sunglasses',route:'/category/sale/sunglasses'},
+    {title:'Automotive',value:'automotive',route:'/category/sale/automotive',options:['color']},
+    {title:'Motorcycle',value:'motorcycle',route:'/category/sale/motorcycle',options:['color']},
+    {title:'Sunglasses',value:'sunglasses',route:'/category/sale/sunglasses',options:['color']},
   ]},
 ]
 
@@ -55,4 +55,32 @@ export const sortByItems = [
   {title:'Price High to Low',value:'price-high-to-low',sortKey:'price',type:'desc'},
   {title:'Name A-Z',value:'name-a-z',sortKey:'title',type:'asc'},
   {title:'Name Z-A',value:'name-z-a',sortKey:'title',type:'desc'},
+]
+
+export const colors = [
+  {value:'red',title:'Red'},
+  {value:'black',title:'Black'},
+  {value:'blue',title:'Blue'},
+  {value:'yellow',title:'Yellow'},
+  {value:'pink',title:'Pink'},
+]
+
+export const defaultSizes = [
+  {value:'xs',title:'XS'},
+  {value:'s',title:'S'},
+  {value:'m',title:'M'},
+  {value:'l',title:'L'},
+  {value:'xl',title:'XL'},
+]
+
+export const numberSizes = [
+  { title: "36", value: "36" },
+  { title: "37", value: "37" },
+  { title: "38", value: "38" },
+  { title: "39", value: "39" },
+  { title: "40", value: "40" },
+  { title: "41", value: "41" },
+  { title: "42", value: "42" },
+  { title: "43", value: "43" },
+  { title: "44", value: "44" }
 ]

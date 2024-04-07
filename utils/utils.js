@@ -51,10 +51,19 @@ const _setProductsLength = (arr) =>{
 }
 
 const _setOldPrice = (prods) =>{
-  prods?.forEach(item=>{
-    item.randomImageIndex = Math.floor(Math.random()*item.images.length);
-    item.oldPrice = item.price + parseFloat(((item.price / 100) * Math.round(item.discountPercentage)).toFixed(2))
-  })
+  if(Array.isArray(prods)){
+    prods?.forEach(item=>{
+      item.randomImageIndex = Math.floor(Math.random()*item.images.length);
+      item.oldPrice = (item.price + parseFloat(((item.price / 100) * Math.round(item.discountPercentage)).toFixed(2))).toFixed(2)
+      item.price = item.price.toFixed(2)
+    })
+  }
+  else{
+    prods.randomImageIndex = Math.floor(Math.random()*prods.images.length);
+    prods.oldPrice = (prods.price + parseFloat(((prods.price / 100) * Math.round(prods.discountPercentage)).toFixed(2))).toFixed(2)
+    prods.price = prods.price.toFixed(2);
+  }
+  
   return prods
 }
 
@@ -100,5 +109,45 @@ export const getCategoryProducts = async (category)=>{
   
 
   return _setOldPrice(_setProductsLength(resultArr));
+}
+
+export const getProductDetail = async (productId) =>{
+  const prodDetail = await axiosHolder.get(`/products/${productId}`);
+
+  return _setOldPrice(prodDetail?.data) || {}
+}
+
+export const getProductCategory = (childCategory)=>{
+
+  let resStr = "";
+  let isFounded = false;
+  let categoryObj;
+  const deepFunc = (arr) =>{
+    for(let item of arr){
+      resStr = ''
+      if(item.children){
+        resStr += '||' + item.value
+        resStr += deepFunc(item.children)
+      }
+      else if(item.value === childCategory){
+        resStr+= '||'+ item.value
+        categoryObj = item;
+        isFounded=true;
+        return resStr;
+      }
+      if(isFounded) break;
+    }
+    return resStr
+  }
+
+  deepFunc(menuItems);
+  if(resStr.startsWith('||')){
+    resStr.replace('||','')
+  }
+
+  return {
+    categoryArr:resStr.split('||'),
+    categoryObj
+  }
 }
 

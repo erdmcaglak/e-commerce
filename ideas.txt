@@ -14,3 +14,5 @@
 //TODO kategori sayfasında ürün olmazsa 'no data found' yazısı eklenecek
 //TODO herhangi bir sayfada filtre uygulandığında path'e query olarak eklenecek ve query'e göre de filtre uygulanabilecek
 //TODO filtrelerde arama yapılabilinecek
+//TODO axioslar try-catch ile kapsanacak
+//TODO Herhangi bir sayfada sayfa bulunmazsa 404 page yönlenmesi yapılacak

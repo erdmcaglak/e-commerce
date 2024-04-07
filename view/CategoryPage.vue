@@ -15,7 +15,6 @@
   const productHolder = ref([...categoryProducts || []])
   const activeFiltersList = ref([])
   const includedFilters = ref([]);
-
   const filtersArray = ref([
     {title:'Brand',value:'brand',children:getBrandFilterItems(categoryProducts,'brand')},
     {title:'Price',value:'price',children:getPriceFilterItems(categoryProducts,5)},
@@ -130,7 +129,9 @@
 
 <template>
   <div class="category-container container-main">
-      <Breadcrumb/>
+      <Breadcrumb
+        :categoryArr="breadCrumbArr"
+      />
       <h1 class="category-name">
         {{ kebabToCapitalize(breadCrumbArr.at(-1)) }}
       </h1>
