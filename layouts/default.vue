@@ -1,6 +1,13 @@
+<script setup>
+  import {inject,watch} from 'vue';
+  const { alert, setAlert } = inject('alert')
+</script>
+
+
 <template>
   <div class="page-wrapper">
     <div class="content-wrapper" >
+      <Alert :alert="alert"/>
       <AppBar/>
       <div class="main-wrapper">
         <slot></slot>

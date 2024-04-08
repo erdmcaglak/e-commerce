@@ -1,14 +1,39 @@
-//! Slide left-to-right
+//! Slide right-to-left
 
-.slide-ltr-leave-active,
-.slide-ltr-enter-active {
-  transition: 1s;
+.slide-rtl-enter{
+  opacity: 0;
 }
-.slide-ltr-enter {
-  transform: translate(100%, 0);
+.slide-rtl-enter-active{
+  animation: slide-rtl-in .2s ease-out forwards;
+  transition: opacity .2s;
 }
-.slide-ltr-leave-to {
-  transform: translate(-100%, 0);
+.slide-rtl-leave{
+}
+.slide-rtl-leave-active{
+  animation: slide-rtl-out .2s ease-out forwards;
+  transition: opacity .2s;
+  opacity: 0;
+}
+.slide-rtl-move{
+  transition: transform .2s;
+}
+
+@keyframes slide-rtl-in{
+  from{
+      transform: translateX(100%);
+  }
+  to{
+      transform: translateX(0);
+  }
+}
+
+@keyframes slide-rtl-out{
+  from{
+      transform: translateX(0);
+  }
+  to{
+      transform: translateX(100%);
+  }
 }
 
 //! Fade

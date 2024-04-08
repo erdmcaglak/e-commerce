@@ -84,3 +84,9 @@ export const numberSizes = [
   { title: "43", value: "43" },
   { title: "44", value: "44" }
 ]
+
+export const alertTypeMap = {
+  'danger' : '#ec5757',
+  'success' : '#4CAF50',
+  'warning' : '#FB8C00',
+} 

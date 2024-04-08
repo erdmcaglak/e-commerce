@@ -90,7 +90,7 @@ export const kebabToCapitalize = (item)=>{
   return splittedStr.join(' ');
 }
 
-export const getCategoryProducts = async (category)=>{
+export const getCategoryProducts = async (category,limit)=>{
   const categories = _getAccessableCategories(category);
   const resultArr = [];
 
@@ -107,8 +107,8 @@ export const getCategoryProducts = async (category)=>{
     }
   }
   
-
-  return _setOldPrice(_setProductsLength(resultArr));
+  
+  return limit ? _setOldPrice(_setProductsLength(resultArr)).slice(0,limit) : _setOldPrice(_setProductsLength(resultArr));
 }
 
 export const getProductDetail = async (productId) =>{

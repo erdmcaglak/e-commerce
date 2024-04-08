@@ -1,3 +1,15 @@
+<script setup>
+import {ref} from 'vue'
+  const alert = ref({});
+
+  const setAlert = obj => {
+    alert.value = obj;
+  }
+
+  provide('alert', {alert,setAlert});
+</script>
+
+
 <template>
   <NuxtLayout>
     <NuxtPage />

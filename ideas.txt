@@ -16,3 +16,5 @@
 //TODO filtrelerde arama yapılabilinecek
 //TODO axioslar try-catch ile kapsanacak
 //TODO Herhangi bir sayfada sayfa bulunmazsa 404 page yönlenmesi yapılacak
+//TODO pdp sayfasına yorumlar eklenecek
+//TODO pdp sayfasına 2. bir widget eklenecek

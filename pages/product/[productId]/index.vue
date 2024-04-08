@@ -1,7 +1,8 @@
 <script setup>
   import {ref,watch} from 'vue'
-  import {getProductDetail,getProductCategory} from "@/utils/utils"
-
+  import {getProductDetail,getProductCategory,getCategoryProducts} from "@/utils/utils"  
+  
+  const { alert, setAlert } = inject('alert')
   const route = useRoute()
   const {productId} = route.params;
 
@@ -12,6 +13,17 @@
     size:''
   })
   const quantity = ref(1)
+  const prodCategory = getProductCategory(currentProd.category);
+  const pdpWidgetProds = await getCategoryProducts(currentProd.category,15)
+
+  watch(quantity, async (newVal, oldVal) => {
+    if(newVal < 1){
+      quantity.value = 1;
+    }
+    else if(newVal > currentProd.stock){
+      quantity.value = currentProd.stock
+    }
+  })
 
   const changeImage = (image) =>{
     activeProdImage.value = image;
@@ -33,16 +45,60 @@
     }
   }
 
-  watch(quantity, async (newVal, oldVal) => {
-    if(newVal < 1){
-      quantity.value = 1;
-    }
-    else if(newVal > currentProd.stock){
-      quantity.value = currentProd.stock
-    }
-  })
+  const addToBasket = () =>{
+    //TODO size ve renk seçim kontrol yapılacak
+    let basketItems = [];
+    let isCanAdd = true;
 
-  const prodCategory = getProductCategory(currentProd.category)
+    if(prodCategory.categoryObj?.options?.length >1){
+      if(!selectedOptions.value.color || !selectedOptions.value.size){
+        isCanAdd=false;
+      }
+    }
+    else if(prodCategory.categoryObj?.options?.length === 1){
+      if(!selectedOptions.value.color && !selectedOptions.value.size){
+        isCanAdd=false;
+      }
+    }
+
+    if(isCanAdd){
+      if(window.localStorage.getItem('basket-items')){
+        basketItems = JSON.parse(window.localStorage.getItem('basket-items'));
+      }
+      let currentProdInBasket = basketItems.find(e=>e.item.id === currentProd.id && JSON.stringify(e.options) === JSON.stringify(selectedOptions.value));
+      
+      if(currentProdInBasket && JSON.stringify(currentProdInBasket.options) === JSON.stringify(selectedOptions.value)){
+        if(currentProdInBasket.quantity + quantity.value > currentProd.stock){
+          setAlert({title:"You Have Maximum Quantity",type:'warning'});
+          return
+        }
+        currentProdInBasket.quantity += quantity.value
+      }
+      else{
+        basketItems.push({
+          options:selectedOptions.value,
+          item:currentProd,
+          quantity:quantity.value
+        })
+      }
+
+      setAlert({title:"Product Added To Basket",type:'success'})
+
+      window.localStorage.setItem('basket-items',JSON.stringify(basketItems));
+    }
+    else{
+      let alertTitle = "";
+      if(!selectedOptions.value.color){
+        alertTitle = "Please Select a Color"
+      }
+      else if(!selectedOptions.value.size){
+        alertTitle = "Please Select a Size"
+      }
+      setAlert({title:alertTitle,type:'warning'})
+    }
+    
+  }
+
 </script>
 
 <template>
@@ -57,13 +113,16 @@
         <div class="main-image">
           <img :src="activeProdImage" :alt="currentProd.thumbnail">
         </div>
-        <div class="product-images">
-          <template v-for="index in 5" :key="'image'+index">
-            <div @click="changeImage(currentProd.images[index-1])" :class="['small-image-wrapper',currentProd.images[index-1] === activeProdImage ? 'active-small-image' : '']">
-              <img class="small-image" v-if="currentProd.images[index-1]" :src="currentProd.images[index-1]" :alt="currentProd.title">
-            </div>
-          </template>
+        <div class="product-images-wrapper">
+          <div class="product-images">
+            <template v-for="index in 5" :key="'image'+index">
+              <div @click="changeImage(currentProd.images[index-1])" :class="['small-image-wrapper',currentProd.images[index-1] === activeProdImage ? 'active-small-image' : '']">
+                <img class="small-image" v-if="currentProd.images[index-1]" :src="currentProd.images[index-1]" :alt="currentProd.title">
+              </div>
+            </template>
+          </div>
         </div>
+        
       </div>
       <div class="product-info-area">
         <div class="names-area">
@@ -127,9 +186,19 @@
               @clickTrigger="increaseQuantity"
             />
           </div>
+          <Button
+            class="add-to-basket-btn"
+            icon="mdi:plus"
+            title="Add To Basket"
+            @clickTrigger="addToBasket"
+          />
         </div>
       </div>
     </div>
+    <Slider
+      sliderTitle="Similar Products"
+      :sliderList= "pdpWidgetProds"
+    />
   </div>
 </template>
 
@@ -143,6 +212,9 @@
   .product-details{
     @include d-flex(row,flex-start,flex-start);
     gap: 20px;
+    @media screen and (max-width:768px) {
+      @include d-flex(column,flex-start,stretch);
+    }
     .product-image-area{
       flex: 1 0 1px;
       @include d-flex(column,flex-start,flex-start);
@@ -153,36 +225,50 @@
         height: 600px;
         overflow: hidden;
         @include d-flex-center;
+        @media screen and (max-width:480px) {
+          height: 450px;
+        }
+        @media screen and (max-width:390px) {
+          height: 350px;
+        }
         img{
           object-fit: contain;
           width: 100%;
         }
       }
-      .product-images{
-        @include d-flex(row,flex-start,flex-start);
-        padding: 10px 0;
-        gap: 10px;
-        .small-image-wrapper{
-          width: 75px;
-          height: 75px;
-          cursor: pointer;
-          transition: all .1s ease;
-          overflow: hidden;
-          @include d-flex-center;
-          filter: grayscale(.8);
-          border: 2px solid transparent;
-          .small-image{
-            width: 100%;
-            object-fit: contain;
+      .product-images-wrapper{
+        overflow: auto;
+        width: 100%;
+        .product-images{
+          @include d-flex(row,flex-start,flex-start);
+          padding: 10px 0;
+          gap: 10px;
+          min-width: 460px;
+          .small-image-wrapper{
+            width: 75px;
+            height: 75px;
+            cursor: pointer;
+            transition: all .1s ease;
+            overflow: hidden;
+            @include d-flex-center;
+            filter: grayscale(.8);
+            border: 2px solid transparent;
+            .small-image{
+              width: 100%;
+              object-fit: contain;
+            }
+          }
+          .active-small-image{
+            filter: none;
+            border: 2px solid $red3;
           }
         }
-        .active-small-image{
-          filter: none;
-          border: 2px solid $red3;
-        }
       }
+      
     }
     .product-info-area{
+      position: sticky;
+      top: 130px;
       flex: 1 0 1px;
       @include d-flex(column,flex-start,flex-start);
       gap: 10px;
@@ -272,9 +358,14 @@
         }
       }
       .add-to-basket-area{
-        @include d-flex(row,flex-start,center);
+        @include d-flex(row,flex-start,stretch);
         gap: 10px;
+        width: 100%;
+        @media screen and (max-width:480px) {
+          @include d-flex(column,flex-start,stretch);
+        }
         .quantity-wrapper{
+          flex: 0 0 auto;
           @include d-flex(row,flex-start,stretch);
           gap: 4px;
           .quantity-input{
@@ -290,6 +381,20 @@
               -webkit-appearance: none;
               margin: 0;
             }
+            @media screen and (max-width:480px) {
+              flex: 1 0 1px;
+              max-width: 100%;
+            }
+          }
+        }
+        .add-to-basket-btn{
+          flex: 1 0 1px;
+          color: $white1;
+          background-color: $dark13;
+          border: 1px solid $dark13;
+          &:hover{
+            background-color: transparent;
+            color: $dark13;
           }
         }
       }
