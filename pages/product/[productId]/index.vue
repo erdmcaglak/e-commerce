@@ -3,6 +3,7 @@
   import {getProductDetail,getProductCategory,getCategoryProducts} from "@/utils/utils"  
   
   const { alert, setAlert } = inject('alert')
+  const {setBasketItemCount} = inject('basketItemCount');
   const route = useRoute()
   const {productId} = route.params;
 
@@ -85,6 +86,7 @@
       setAlert({title:"Product Added To Basket",type:'success'})
 
       window.localStorage.setItem('basket-items',JSON.stringify(basketItems));
+      setBasketItemCount();
     }
     else{
       let alertTitle = "";
@@ -96,7 +98,7 @@
       }
       setAlert({title:alertTitle,type:'warning'})
     }
-    
+    quantity.value = 1;
   }
 
 </script>
@@ -175,17 +177,22 @@
           />
         </template>
         <div class="add-to-basket-area">
-          <div class="quantity-wrapper">
+          <Quantity
+            v-model:model="quantity"
+            :max="currentProd.stock"
+            :min="1"
+          />
+          <!-- <div class="quantity-wrapper">
             <Button
               icon="mdi:minus"
               @clickTrigger="decreaseQuantity"
             />
-            <input @input="stockControl" v-model="quantity" :min="1" :max="currentProd.stock" class="quantity-input" type="number">
+            <input v-model="quantity" :min="1" :max="currentProd.stock" class="quantity-input" type="number">
             <Button
               icon="mdi:plus"
               @clickTrigger="increaseQuantity"
             />
-          </div>
+          </div> -->
           <Button
             class="add-to-basket-btn"
             icon="mdi:plus"

@@ -1,83 +1,69 @@
 <script setup>
+  import {priceFixer} from "@/utils/utils"
+  const quantity = defineModel('quantity')
+
+
   const props = defineProps({
-    image:{
-      type:String,
-      required:true
-    },
-    secondImage:{
-      type:String,
-      default:''
-    },
-    title:{
-      type:String,
-      required:true
-    },
-    src:{
-      type:String,
-      default:'#'
-    },
-    price:{
-      type:[Number,String],
-      required:true
-    },
-    oldPrice:{
-      type:[Number,String],
-      default:0
-    },
-    brand:{
-      type:String,
-      default:''
-    },
-    rate:{
-      type:[String,Number],
-      default:0
-    },
-    productId:{
-      type:String,
-      required:true
-    },
-    discount:{
-      type:[String,Number],
-      default:0
-    }
-  })
-
-  const priceFixer = (price)=>{
-    return '$' + parseFloat(price).toFixed(2).replace('.',',');
-  } 
-
-  const isHaveBadge = computed(() => {
-    return !!(Math.random()*100 < 25)
+    image:{type:String,required:true},
+    secondImage:{type:String,default:''},
+    title:{type:String,required:true},
+    src:{type:String,default:'#'},
+    price:{type:[Number,String],required:true},
+    oldPrice:{type:[Number,String],default:0},
+    brand:{type:String,default:''},
+    rate:{type:[String,Number],default:0},
+    productId:{type:String,required:true},
+    discount:{type:[String,Number],default:0},
+    row:{type:Boolean,default:false},
+    options:{type:Object},
+    stock:{type:[Number,String]}
   })
 </script>
 
 <template>
   <ClientOnly>
-    <NuxtLink :to="'/product/'+props.productId" class="cart-item-wrapper">
-      <div v-if="props.discount && props.oldPrice" class="cart-item-badge">
+    <NuxtLink :to="!props.row ? '/product/'+props.productId : ''" :class="['cart-item-wrapper',props.row ? 'row' : '']">
+      <div v-if="props.discount && props.oldPrice && !props.row" class="cart-item-badge">
         %{{ Math.round(props.discount) }}
       </div>
       <div class="cart-item-image-wrapper">
-        <div class="first-image-wrapper">
+        <NuxtLink :to="props.row ? '/product/'+props.productId : ''" class="first-image-wrapper">
           <img loading="lazy" :src="props.image" :alt="props.title">
-        </div>
-        <div v-if="props.secondImage" class="second-image-wrapper">
+        </NuxtLink>
+        <div v-if="props.secondImage && !props.row" class="second-image-wrapper">
           <img loading="lazy" class="second-image" :src="props.secondImage" :alt="props.title">
         </div>
       </div>
       <div class="cart-info-wrapper px8">
-        <div class="cart-item-brand">
-          <p><b>{{ props.brand }}</b></p>
+        <div class="names-wrapper">
+          <div class="cart-item-brand">
+            <p><b>{{ props.brand }}</b></p>
+          </div>
+          <NuxtLink :to="props.row ? '/product/'+props.productId : ''" class="cart-item-title">
+            <p>{{ props.title }}</p>
+            <p v-if="props.row && props.options?.size">{{props.options.size.title}}</p>
+          </NuxtLink>
+          <div v-if="props.row && props.options?.color" class="cart-item-color">
+            Color: 
+            <div class="color-div" :style="{backgroundColor:props.options?.color.value}"></div>
+          </div>
         </div>
-        <div class="cart-item-title">
-          <p>{{ props.title }}</p>
-        </div>
+        <Quantity
+          v-model:model="quantity"
+          :min="1"
+          :max="props.stock"
+        />
         <div class="cart-item-price-wrapper">
-          <div v-if="props.oldPrice" class="old-price">
+          <div v-if="props.oldPrice && !props.row" class="old-price">
             {{ priceFixer(props.oldPrice) }}
           </div>
-          <div :class="['price',props.oldPrice? 'color-red' : '']">
-            {{ priceFixer(props.price) }}
+          <div :class="['price',props.oldPrice && !props.row ? 'color-red' : '']">
+            <span v-if="!props.row">
+              {{ priceFixer(props.price) }}
+            </span>
+            <span v-else>
+              {{ priceFixer(parseFloat((props.price * props.quantity).toFixed(2))) }}
+            </span>
           </div>
         </div>
       </div>
@@ -195,6 +181,7 @@
       @extend .cart-item-brand;
       min-height: 50px;
       @include d-flex(row,flex-start,flex-start);
+      gap: 4px;
       &:hover{
         text-decoration: underline;
       }
@@ -220,6 +207,64 @@
       }
       .color-red{
         color: $red12!important;
+      }
+    }
+  }
+}
+
+.row{
+  flex-direction:row!important;
+  align-items:center!important;
+  border: none!important;
+  .cart-item-image-wrapper{
+    max-height: 100px!important;
+    min-height: 100px!important;
+    min-width: 100px!important;
+    max-width: 100px!important;
+    height: 100px!important;
+    width: 100px!important;
+    &:hover{
+      .first-image-wrapper{
+        width:100%!important;
+        height: 100%!important;
+      }
+    }
+  }
+  .cart-info-wrapper{
+    flex-direction: row!important;
+    justify-content: space-between!important;
+    align-items: center!important;
+    .names-wrapper{
+      width: 250px;
+      max-width: 250px;
+      min-width: 250px;
+      .cart-item-brand,.cart-item-title{
+        height: fit-content!important;
+        min-height: unset!important;
+        padding: 3px 0;
+        p{
+          width: fit-content!important;
+        }
+      }
+      .cart-item-color{
+        font-size: 14px;
+        @include d-flex(row,flex-start,center);
+        gap: 4px;
+        font-weight: 700;
+        .color-div{
+          width: 30px;
+          height: 15px;
+          border-radius: 4px;
+        }
+      }
+    }
+    
+    .cart-item-price-wrapper{
+      min-width: 100px!important;
+      align-items: center!important;
+      justify-content: center!important;
+      .price{
+        padding:0!important;
       }
     }
   }

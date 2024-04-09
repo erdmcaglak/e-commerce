@@ -151,3 +151,7 @@ export const getProductCategory = (childCategory)=>{
   }
 }
 
+export const priceFixer = (price)=>{
+  return '$' + parseFloat(price).toFixed(2).replace('.',',');
+}
+

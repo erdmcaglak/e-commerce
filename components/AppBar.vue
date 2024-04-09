@@ -1,7 +1,8 @@
 <script setup>
-  import {ref} from 'vue';
+  import {ref,inject} from 'vue';
 
   const isClickedHamMenu = ref(false);
+  const {basketItemCount} = inject('basketItemCount')
 
   const toggleMenu = () =>{
     isClickedHamMenu.value = !isClickedHamMenu.value
@@ -44,9 +45,12 @@
         <div class="icon-wrapper">
           <Icon class="button-icon" name="mdi:account" color="black" size="24"/>
         </div>
-        <div class="icon-wrapper">
+        <NuxtLink to="/checkout" class="icon-wrapper">
           <Icon class="button-icon" name="mdi:cart-outline" color="black" size="24"/>
-        </div>
+          <div  v-if="basketItemCount>0" class="cart-item-count">
+            {{basketItemCount}}
+          </div>
+        </NuxtLink>
       </div>
     </div>
     <Menu/>
@@ -121,6 +125,7 @@
         @include d-flex(row,space-around,center);
       }
       .icon-wrapper{
+        position: relative;
         transition: all .2s ease;
         padding: 6px;
         border-radius: 99px;
@@ -129,6 +134,21 @@
           &:hover{
             background-color: $white3;
           }
+        }
+        .cart-item-count{
+          position: absolute;
+          right: 0;
+          top: 0;
+          background-color: $red12;
+          width: 15px;
+          height: 15px;
+          border-radius: 999px;
+          font-weight: 700;
+          font-size: 8px;
+          color: #fff;
+          @include d-flex-center;
+          line-height: 1;
+          padding-bottom: 1px;
         }
       }
       .hamburger-wrapper{
