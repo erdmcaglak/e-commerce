@@ -22,3 +22,4 @@
 //TODO Sepet sayfası için bir tane kupon tanımlanacak 
 //TODO Metalar yerleştirilecek
 //TODO sepete ekleme işlemleri vs dummmyJson'daki servislere istek atılarak simüle edilecek
+//TODO computed kullanılan yerde computed tanımlaması yapılacak

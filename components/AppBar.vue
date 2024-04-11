@@ -36,17 +36,34 @@
         <input type="text" autocomplete="off" spellcheck="false" placeholder="Search">
       </div>
       <div class="app-bar-actions">
-        <!-- //TODO Icon komponenti yapılacak -->
         <div :class="['hamburger-wrapper', isClickedHamMenu ? 'close' : '']" @click="toggleMenu">
           <span class="child-1"></span>
           <span class="child-2"></span>
           <span class="child-3"></span>
         </div>
         <div class="icon-wrapper">
-          <Icon class="button-icon" name="mdi:account" color="black" size="24"/>
+          <Button
+            icon="mdi:account"
+            fontSize="24px"
+            fontColor="#000"
+            text
+            hoveredBackground="transparent"
+            background="transparent"
+            hoveredColor="#000"
+            padding="0"
+          />
         </div>
         <NuxtLink to="/checkout" class="icon-wrapper">
-          <Icon class="button-icon" name="mdi:cart-outline" color="black" size="24"/>
+          <Button
+            icon="mdi:cart-outline"
+            fontSize="24px"
+            fontColor="#000"
+            text
+            hoveredBackground="transparent"
+            background="transparent"
+            hoveredColor="#000"
+            padding="0"
+          />
           <div  v-if="basketItemCount>0" class="cart-item-count">
             {{basketItemCount}}
           </div>

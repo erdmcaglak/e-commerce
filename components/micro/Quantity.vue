@@ -1,4 +1,5 @@
 <script setup>
+  import {watch} from 'vue' 
   const model = defineModel('model');
   const props = defineProps({
     min:{type:[Number,String],default:1},
@@ -10,16 +11,23 @@
   const increaseQuantity = () =>{
     model.value++;
   }
+
+  watch(model,(newVal,oldVal)=>{
+    if(newVal < props.min) model.value = props.min
+    else if(newVal > props.max) model.value = props.max
+  })
 </script>
 
 <template>
   <div class="quantity-wrapper">
     <Button
+      class="buttons"
       icon="mdi:minus"
       @clickTrigger="decreaseQuantity"
     />
     <input v-model="model" :min="min" :max="max" class="quantity-input" type="number">
     <Button
+      class="buttons"
       icon="mdi:plus"
       @clickTrigger="increaseQuantity"
     />
@@ -47,6 +55,11 @@
     @media screen and (max-width:480px) {
       flex: 1 0 1px;
       max-width: 100%;
+    }
+  }
+  .buttons{
+    @media screen and (max-width:480px) {
+      display: none!important;
     }
   }
 }

@@ -1,7 +1,7 @@
 <script setup>
   import {priceFixer} from "@/utils/utils"
   const quantity = defineModel('quantity')
-
+  const emit = defineEmits(['removeTrigger'])
 
   const props = defineProps({
     image:{type:String,required:true},
@@ -16,8 +16,12 @@
     discount:{type:[String,Number],default:0},
     row:{type:Boolean,default:false},
     options:{type:Object},
-    stock:{type:[Number,String]}
+    stock:{type:[Number,String]},
   })
+
+  const removeTriggerFunc = () =>{
+    emit('removeTrigger')
+  }
 </script>
 
 <template>
@@ -40,33 +44,48 @@
             <p><b>{{ props.brand }}</b></p>
           </div>
           <NuxtLink :to="props.row ? '/product/'+props.productId : ''" class="cart-item-title">
-            <p>{{ props.title }}</p>
-            <p v-if="props.row && props.options?.size">{{props.options.size.title}}</p>
+            <p>{{ props.title }} <span v-if="props.row && props.options?.size">{{props.options.size.title}}</span></p>
           </NuxtLink>
           <div v-if="props.row && props.options?.color" class="cart-item-color">
             Color: 
             <div class="color-div" :style="{backgroundColor:props.options?.color.value}"></div>
           </div>
         </div>
-        <Quantity
-          v-model:model="quantity"
-          :min="1"
-          :max="props.stock"
-        />
-        <div class="cart-item-price-wrapper">
-          <div v-if="props.oldPrice && !props.row" class="old-price">
-            {{ priceFixer(props.oldPrice) }}
-          </div>
-          <div :class="['price',props.oldPrice && !props.row ? 'color-red' : '']">
-            <span v-if="!props.row">
-              {{ priceFixer(props.price) }}
-            </span>
-            <span v-else>
-              {{ priceFixer(parseFloat((props.price * props.quantity).toFixed(2))) }}
-            </span>
+        <div class="quantity-and-price">
+          <Quantity
+            v-if="props.row"
+            v-model:model="quantity"
+            :max="props.stock"
+            :min="1"
+          />
+          <div class="cart-item-price-wrapper">
+            <div v-if="props.oldPrice && !props.row" class="old-price">
+              {{ priceFixer(props.oldPrice) }}
+            </div>
+            <div :class="['price',props.oldPrice && !props.row ? 'color-red' : '']">
+              <span v-if="!props.row">
+                {{ priceFixer(props.price) }}
+              </span>
+              <span v-else>
+                {{ priceFixer(parseFloat((props.price * props.quantity).toFixed(2))) }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
+      <Button
+        v-if="props.row"
+        icon="mdi:delete-outline"
+        fontSize="24px"
+        fontColor="#FF0505"
+        text
+        hoveredBackground="#FFCCCC"
+        background="transparent"
+        hoveredColor="#CC0000"
+        padding="6px"
+        rounded="999px"
+        @clickTrigger="removeTriggerFunc"
+      />
     </NuxtLink>
   </ClientOnly>
   
@@ -234,10 +253,19 @@
     flex-direction: row!important;
     justify-content: space-between!important;
     align-items: center!important;
+    @media screen and (max-width:1024px) {
+      flex-direction: column!important;
+      align-items: flex-start!important;
+    }
     .names-wrapper{
       width: 250px;
       max-width: 250px;
       min-width: 250px;
+      @media screen and (max-width:480px) {
+        width: unset!important;
+        max-width: unset!important;
+        min-width: unset!important;
+      }
       .cart-item-brand,.cart-item-title{
         height: fit-content!important;
         min-height: unset!important;
@@ -258,15 +286,22 @@
         }
       }
     }
-    
-    .cart-item-price-wrapper{
-      min-width: 100px!important;
-      align-items: center!important;
-      justify-content: center!important;
-      .price{
-        padding:0!important;
+    .quantity-and-price{
+      @include d-flex(row,flex-start,center);
+      @media screen and (max-width:480px) {
+        flex-wrap: wrap;
+      }
+      .cart-item-price-wrapper{
+        min-width: 100px!important;
+        align-items: center!important;
+        justify-content: center!important;
+        .price{
+          padding:0!important;
+        }
       }
     }
+    
+    
   }
 }
 </style>

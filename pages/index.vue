@@ -21,18 +21,18 @@
     </NuxtLink>
     <Slider
       sliderTitle="Recomended For You"
-      :sliderList= "recomendedForYou"
+      :sliderList="recomendedForYou"
       />
     <LazyNuxtLink to="/category/clothes" class="hp-banner">
       <img loading="lazy" src="/banner_2.png" alt=""/>
     </LazyNuxtLink>
     <Slider
       sliderTitle="Shop The Look"
-      :sliderList= "shopTheLook"
+      :sliderList="shopTheLook"
       />
     <Slider
       sliderTitle="Our Picks"
-      :sliderList= "ourPicks"
+      :sliderList="ourPicks"
       />
   </div>
   

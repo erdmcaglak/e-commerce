@@ -80,7 +80,7 @@
 .slider-wrapper{
   width: 100%;
   position: relative;
-  min-height: 600px;
+  min-height: 500px;
   @include d-flex(column,center,flex-start);
   .slider-title{
     padding: 10px 0;
