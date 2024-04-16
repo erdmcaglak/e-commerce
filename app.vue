@@ -15,30 +15,12 @@ import {ref} from 'vue'
     setBasketItemCount();
   })
 
-  
   provide('basketItemCount',{basketItemCount,setBasketItemCount})
   provide('alert', {alert,setAlert});
 </script>
-
 
 <template>
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
 </template>
-<style lang="scss">
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  list-style: none;
-  text-decoration: none;
-  font-family: 'Roboto', sans-serif;
-}
-html,body,#__nuxt{
-  -webkit-tap-highlight-color: transparent;
-  height: 100%;
-  width: 100%;
-  background-color: $white1;
-}
-</style>

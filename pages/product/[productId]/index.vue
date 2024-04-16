@@ -101,6 +101,10 @@
     quantity.value = 1;
   }
 
+  const getSmallImagesLength = () =>{
+    return currentProd.images.length > 5 ? 5 : currentProd.images.length
+  }
+
 </script>
 
 <template>
@@ -117,7 +121,7 @@
         </div>
         <div class="product-images-wrapper">
           <div class="product-images">
-            <template v-for="index in 5" :key="'image'+index">
+            <template v-for="index in getSmallImagesLength()" :key="'image'+index">
               <div @click="changeImage(currentProd.images[index-1])" :class="['small-image-wrapper',currentProd.images[index-1] === activeProdImage ? 'active-small-image' : '']">
                 <img class="small-image" v-if="currentProd.images[index-1]" :src="currentProd.images[index-1]" :alt="currentProd.title">
               </div>

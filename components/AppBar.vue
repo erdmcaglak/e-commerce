@@ -53,7 +53,7 @@
             padding="0"
           />
         </div>
-        <NuxtLink to="/checkout" class="icon-wrapper">
+        <NuxtLink to="/cart" class="icon-wrapper">
           <Button
             icon="mdi:cart-outline"
             fontSize="24px"

@@ -42,6 +42,7 @@
 .home-page{
   overflow: hidden;
   width: 100%;
+  gap: 20px;
   @include d-flex(column,flex-start,stretch);
   .hp-banner{
     @include d-flex(row,center,flex-start);

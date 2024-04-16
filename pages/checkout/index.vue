@@ -1,227 +1,139 @@
-<script setup>  
-  import {ref,watch,computed} from 'vue'
-  import {priceFixer,getProducts} from "@/utils/utils"
-  const basketProds = ref([]);
-  const discountCoupon = ref('');
-  const basketWidgetProds = await getProducts();
-
-  watch(basketProds,(newVal,oldVal)=>{
-    if(!oldVal) return;
-    
-    window.localStorage.setItem('basket-items',JSON.stringify(newVal));
-  },{
-    deep:true
+<script setup>
+  import {ref,watch} from 'vue'
+  const models = ref({
+    name:'',
+    lastName:'',
+    phone:'',
+    address:'',
+    city:'',
+    country:'',
+    mail:'',
+    note:''
   })
 
-  onMounted(()=>{
-    basketProds.value = window.localStorage.getItem('basket-items') ? JSON.parse(window.localStorage.getItem('basket-items')) : undefined
-  })
+  const deliveryInputs = [
+    [
+      {title:'First Name',model:'name',require:true},
+      {title:'Last Name',model:'lastName',require:true},
+    ],
+    {title:'Phone',model:'phone',require:true},
+    {title:'Address',model:'address',type:'textField',require:true},
+    {title:'Country',model:'country',require:true},
+    {title:'Town/City',model:'city',require:true},
+  ] 
 
-  const getSubTotal = computed(() => {
-    return basketProds.value.reduce((a,b) => a + parseFloat((b.quantity * b.item.price).toFixed(2)) ,0)
-  })
+  const additionalInputs = [
+    {title:'E-mail',model:'mail'},
+    {title:'Note',model:'note'},
+  ]
 
-  const calculateDelivery = computed(()=>{
-    let totalOldPrice = basketProds.value.reduce((a,b) => a + parseFloat(b.item.oldPrice) ,0)
-    let totalPrice = basketProds.value.reduce((a,b) => a + parseFloat(b.item.price) ,0)
-
-    return parseFloat(((totalOldPrice - totalPrice) / (basketProds.value.length + 1)).toFixed(2))
-  })
-
-  const getGrandTotal = computed(()=>{
-    return (getSubTotal.value + calculateDelivery.value)
-  })
-
-  const removeItemFromBasket = (index) =>{
-    basketProds.value.splice(index,1);
-  }
-
-  const checkout = () =>{
-    console.log('Checkout button clicked')
+  const continueToPayment = () =>{
+    console.log('aaaaaa')
   }
 </script>
 
 <template>
-  <div class="basket-page-wrapper container-main">
-    <div v-if="basketProds.length > 0" class="basket-header">
-      Your Basket
-    </div>
-    <div class="products-and-info">
-      <template v-if="basketProds.length > 0">
-        <div class="basket-products">
-          <Cart
-            v-for="(basketItem,i) in basketProds"
-            :key="'basketItem' +i"
-            row
-            v-model:quantity="basketItem.quantity"
-            :stock="basketItem.item.stock"
-            :options="basketItem.options"
-            :image="basketItem.item.images[0]"
-            :secondImage="basketItem.item.images[1] || ''"
-            :brand="basketItem.item.brand || ''"
-            :title="basketItem.item.title"
-            :price="basketItem.item.price"
-            :oldPrice="basketItem.item.oldPrice || 0"
-            :discount="basketItem.item.discountPercentage || 1"
-            :productId="basketItem.item.id.toString()"
-            @removeTrigger="removeItemFromBasket(i)"
+  <div class="checkout-wrapper container-main">
+    <!-- //TODO kod tekrarından kurtul -->
+    <div class="delivery-infos">
+      <h3 class="delivery-header">Delivery Details</h3>
+      <Divider/>
+      <div class="delivery-inputs-wrapper">
+        <template v-for="(item,i) in deliveryInputs" :key="'deliveryInputs'+i">
+          <Input
+            :inputId="'deliveryInputs'+i"
+            class="delivery-input"
+            v-if="!Array.isArray(item)"
+            :type="item.type"
+            rounded
+            :label="item.title"
+            v-model:model="models[item.model]"
+            :required="item.require"
           />
-        </div>
-        <div class="basket-summary">
-          <div class="discount-coupon">
-            <div class="title">
-              Discount coupon
-            </div>
-            <Input 
-              borderColor="#B3B3B3"
-              placeHolderText="Discount"
-              v-model:model="discountCoupon"
+          <div v-else class="row-inputs">
+            <Input
+              :inputId="'rowInput'+k"
+              class="delivery-input"
+              v-for="(rowInput,k) in item"
+              :key="'rowInput'+k"
+              :type="rowInput.type"
               rounded
-              textColor="#323232"
+              :label="rowInput.title"
+              v-model:model="models[rowInput.model]"
+              :required="rowInput.require"
             />
           </div>
-          <div class="summary-info">
-            <div class="summary-header">
-              Order Summary
-            </div>
-            <div class="sub-total price-info">
-              <span class="title">Sub Total</span>
-              <span class="price">{{priceFixer(getSubTotal)}}</span>
-            </div>
-            <div class="delivery-total price-info">
-              <span class="title">Delivery</span>
-              <span class="price">{{priceFixer(calculateDelivery)}}</span>
-            </div>
-            <div class="grand-total price-info">
-              <span class="title">Total</span>
-              <span class="price">{{priceFixer(getGrandTotal)}}</span>
-            </div>
-          </div>
-          <Button
-            title="Checkout Now"
-            rounded="4px"
-            fontSize="24px"
-            background="#00CC00"
-            borderColor="#00CC00"
-            hoveredBackground="#00E600"
-            fontColor="#fff"
-            @clickTrigger="checkout"
+        </template>
+      </div>
+      <h3 class="delivery-header">Delivery Details</h3>
+      <Divider/>
+      <div class="delivery-inputs-wrapper">
+        <template v-for="(item,i) in additionalInputs" :key="'deliveryInputs'+i">
+          <Input
+            :inputId="'deliveryInputs'+i"
+            class="delivery-input"
+            v-if="!Array.isArray(item)"
+            :type="item.type"
+            rounded
+            :label="item.title"
+            v-model:model="models[item.model]"
+            :required="item.require"
           />
-        </div>
-      </template>
-      <template v-else>
-        <div class="not-found">
-          Your basket is currently empty
-        </div>
-      </template>
+          <div v-else class="row-inputs">
+            <Input
+              :inputId="'rowInput'+k"
+              class="delivery-input"
+              v-for="(rowInput,k) in item"
+              :key="'rowInput'+k"
+              :type="rowInput.type"
+              rounded
+              :label="rowInput.title"
+              v-model:model="models[rowInput.model]"
+              :required="rowInput.require"
+            />
+          </div>
+        </template>
+      </div>
+      <Button
+        title="Proceed to Payment"
+        rounded
+        padding="10px 0"
+        @clickTrigger="continueToPayment"
+      />
     </div>
-    <Slider
-      sliderTitle="Complemantary Products"
-      :sliderList="basketWidgetProds"
-    />
+    <div class="product-infos">
+
+    </div>
   </div>
 </template>
 
 <style lang="scss">
-.basket-page-wrapper{
-  @include d-flex(column,flex-start,stretch);
-  gap: 20px;
-  .basket-header{
-    @include d-flex(row,flex-start,center);
-    font-size: 30px;
-    font-weight: 500;
-    color: $dark13;
-  }
-  .products-and-info{
-    @include d-flex(row,flex-start,flex-start);
-    gap: 40px;
-    @media screen and (max-width:1024px) {
-      flex-direction: column;
-    }
-    .basket-products{
-      flex: 7 0 1px;
-      @include d-flex(column,flex-start,stretch);
-      @media screen and (max-width:1024px) {
-        flex: unset;
-        width: 100%!important;
-      }
-    }
-    .basket-summary{
-      flex: 3 0 1px;
-      @include d-flex(column,flex-start,stretch);
-      padding: 10px 0;
-      gap: 20px;
-      @media screen and (max-width:1024px) {
-        flex: unset;
-        width: 100%!important;
-      }
-      .summary-info{
-        @include d-flex(column,flex-start,stretch);
-        .summary-header{
-          @include d-flex(row,flex-start,center);
-          text-align: left;
-          font-size: 20px;
-          text-transform: capitalize;
-          font-weight: 700;
-          color: $dark13;
-          padding: 10px 0;
-          border-bottom: 1px solid $gray1;
-        }
-        .price-info{
-          @include d-flex(row,space-between,center);
-          padding: 8px 5px;
-          .title{
-            font-weight: 700;
-            color: $dark13;
-            font-size: 16px;
-          }
-          .price{
-            font-size: 16px;
-            font-weight: 500;
-            color: $dark6;
-          }
-        }
-        .grand-total{
-          .title{
-            font-weight: 700;
-            color: $dark13;
-            font-size: 22px;
-          }
-          .price{
-            font-size: 22px;
-            font-weight: 700;
-            color: $dark10;
-          }
-        }
-      }
-      .discount-coupon{
-        @include d-flex(column,flex-start,flex-start);
-        width: 100%;
-        gap: 10px;
-        .title{
-          width: 100%;
-          @include d-flex(row,flex-start,center);
-          text-align: left;
-          font-size: 20px;
-          text-transform: capitalize;
-          font-weight: 700;
-          color: $dark13;
-          padding: 10px 0;
-          border-bottom: 1px solid $gray1;
-        }
-      }
-    }
-    .not-found{
-      width: 100%;
-      @include d-flex-center;
-      text-align: center;
-      font-size: 36px;
-      font-weight: 700;
+.checkout-wrapper{
+  @include d-flex(row,flex-start,flex-start);
+  gap: 15px;
+  .delivery-infos{
+    flex: 2 0 1px;
+    @include d-flex(column,flex-start,stretch);
+    .delivery-header{
       color: $dark13;
-      padding: 50px 0;
-      background-color: $white2;
-      border-radius: 4px;
+      font-size: 18px;
+      font-weight: 500;
+      margin-top: 20px;
     }
+    .delivery-inputs-wrapper{
+      padding: 20px 0;
+      @include d-flex(column,flex-start,stretch);
+      gap: 15px;
+      .row-inputs{
+        gap: 15px;
+        @include d-flex(row,flex-start,center);
+      }
+    }
+  }
+  .product-infos{
+    flex: 1 0 1px;
+    border: 1px solid red;
+    @include d-flex(column,flex-start,stretch);
   }
 }
 </style>

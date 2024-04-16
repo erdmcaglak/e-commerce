@@ -19,7 +19,7 @@
       '--font-color':props.fontColor,
       '--font-size':props.fontSize,
       '--border-color':props.borderColor,
-      '--radius': typeof props.rounded === 'boolean' ? '8px' :  props.rounded,
+      '--radius': typeof props.rounded === 'boolean' ? '4px' :  props.rounded,
       '--background':props.background,
       '--hovered-bgc':props.hoveredBackground,
       '--hovered-font-color':props.hoveredColor,

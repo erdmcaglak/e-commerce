@@ -1,3 +1,4 @@
+//TODO Tüm sayfalar küçük componentlere bölünecek
 //TODO i18n eklencek
 //TODO Icon komponenti yapılacak
 //TODO Menü rengi değiştirilecek ve xp görünümünden kurtulunacak
@@ -18,8 +19,10 @@
 //TODO Herhangi bir sayfada sayfa bulunmazsa 404 page yönlenmesi yapılacak
 //TODO pdp sayfasına yorumlar eklenecek
 //TODO pdp sayfasına 2. bir widget eklenecek
-//TODO utils içerisindeki fonskiyonların yerleri düzenlenecek 
+//TODO utils içerisindeki fonksiyonların yerleri düzenlenecek 
 //TODO Sepet sayfası için bir tane kupon tanımlanacak 
 //TODO Metalar yerleştirilecek
-//TODO sepete ekleme işlemleri vs dummmyJson'daki servislere istek atılarak simüle edilecek
+//TODO dummmyJson'daki servislerin hepsi istek atılarak simüle edilecek
 //TODO computed kullanılan yerde computed tanımlaması yapılacak
+//TODO sepet sayfasında freeShipping için fiyat limiti koyulacak
+//TODO statik veriler enum içerisine taşınacak
