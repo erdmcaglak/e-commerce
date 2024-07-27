@@ -18,8 +18,8 @@ onMounted(()=>{
     const tryTexts = [
       'Nope!',
       'You Are Funny',
-      'Please Dont!',
-      'DONT DO IT',
+      'Please Dont! Bilader',
+      'Komik Değil DONT DO IT',
       'If You Do That Again, Bad Things Will Happen'
     ]
     let tryCount =0;
@@ -29,9 +29,16 @@ onMounted(()=>{
     if(tryTexts[tryCount]){
       setAlert({title:tryTexts[tryCount],type: tryCount === 3 ? 'danger' : 'warning'})
     }
+    else{
+      setAlert({title:tryTexts[0],type:'warning'})
+      tryCount = 0;
+      
+    }
     tryCount++;
     localStorage.setItem('tryCount',JSON.stringify(tryCount))
-    router.push('/');
+    setTimeout(()=>{
+      router.push('/');
+    },1e3);
   }
   else{
     taxId.value = '#'+JSON.parse(localStorage.getItem('taxId'))
