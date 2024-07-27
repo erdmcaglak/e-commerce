@@ -155,3 +155,24 @@ export const priceFixer = (price)=>{
   return '$' + parseFloat(price).toFixed(2).replace('.',',');
 }
 
+export const customHttp = async (status,response) =>{
+  let resMessage='';
+  if(response){
+    resMessage = '/'+response
+  }
+  const res = await axiosHolder.get(`/http/${status}${resMessage}?delay=2000`);
+
+  return res.data;
+}
+
+export const generateTaxId = (length=10) => {
+  const characters = '0123456789abcdefghijklmnopqrstuvwxyz';
+  let result = '';
+  const charactersLength = characters.length;
+  
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  
+  return result.toUpperCase();
+}

@@ -17,6 +17,7 @@
     row:{type:Boolean,default:false},
     options:{type:Object},
     stock:{type:[Number,String]},
+    hideEdit:{type:Boolean,default:false}
   })
 
   const removeTriggerFunc = () =>{
@@ -53,18 +54,19 @@
         </div>
         <div class="quantity-and-price">
           <Quantity
-            v-if="props.row"
+            v-if="props.row && !props.hideEdit"
             v-model:model="quantity"
             :max="props.stock"
             :min="1"
           />
           <div class="cart-item-price-wrapper">
-            <div v-if="props.oldPrice && !props.row" class="old-price">
+            <div v-if="props.oldPrice && (!props.row || !props.hideEdit)" class="old-price">
               {{ priceFixer(props.oldPrice) }}
             </div>
             <div :class="['price',props.oldPrice && !props.row ? 'color-red' : '']">
               <span v-if="!props.row">
                 {{ priceFixer(props.price) }}
+                 
               </span>
               <span v-else>
                 {{ priceFixer(parseFloat((props.price * props.quantity).toFixed(2))) }}
@@ -73,8 +75,8 @@
           </div>
         </div>
       </div>
-      <Button
-        v-if="props.row"
+      <!-- <Button
+        v-if="props.row && !props.hideEdit"
         icon="mdi:delete-outline"
         fontSize="24px"
         fontColor="#FF0505"
@@ -85,7 +87,7 @@
         padding="6px"
         rounded="999px"
         @clickTrigger="removeTriggerFunc"
-      />
+      /> -->
     </NuxtLink>
   </ClientOnly>
   
@@ -295,6 +297,10 @@
         min-width: 100px!important;
         align-items: center!important;
         justify-content: center!important;
+        @media screen and (max-width:400px) {
+          align-items:flex-start!important;
+          padding: 5px 0;
+        }
         .price{
           padding:0!important;
         }

@@ -1,5 +1,8 @@
 <script setup>
   import {ref,inject} from 'vue';
+  const props = defineProps({
+    modeCheckout:{type:Boolean,default:false}
+  })
 
   const isClickedHamMenu = ref(false);
   const {basketItemCount} = inject('basketItemCount')
@@ -31,12 +34,12 @@
       <NuxtLink class="logo-wrapper" to="/">
         <img src="/logo.png" alt="Artisan">
       </NuxtLink>
-      <div class="search-wrapper">
+      <div v-if="!props.modeCheckout" class="search-wrapper">
         <Icon name="mdi:magnify" color="black" size="24"/>
         <input type="text" autocomplete="off" spellcheck="false" placeholder="Search">
       </div>
       <div class="app-bar-actions">
-        <div :class="['hamburger-wrapper', isClickedHamMenu ? 'close' : '']" @click="toggleMenu">
+        <div v-if="!props.modeCheckout" :class="['hamburger-wrapper', isClickedHamMenu ? 'close' : '']" @click="toggleMenu">
           <span class="child-1"></span>
           <span class="child-2"></span>
           <span class="child-3"></span>
@@ -70,7 +73,7 @@
         </NuxtLink>
       </div>
     </div>
-    <Menu/>
+    <Menu v-if="!props.modeCheckout"/>
   </div>
 </template>
 <style lang="scss" scoped>

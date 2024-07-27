@@ -26,3 +26,5 @@
 //TODO computed kullanılan yerde computed tanımlaması yapılacak
 //TODO sepet sayfasında freeShipping için fiyat limiti koyulacak
 //TODO statik veriler enum içerisine taşınacak
+//TODO dummyjson'a yeni ürünler eklenmiş, bunlara göre tekrar düzenleme yap
+//TODO sepet sayfasında quantity sıfıra indirilecilecek ve 0 olduğunda silincek

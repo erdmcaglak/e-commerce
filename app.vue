@@ -2,6 +2,7 @@
 import {ref} from 'vue'
   const alert = ref({});
   const basketItemCount = ref(0)
+  const route = useRoute()
 
   const setAlert = obj => {
     alert.value = obj;
