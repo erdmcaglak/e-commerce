@@ -9,7 +9,7 @@
   watch(basketProds,(newVal,oldVal)=>{
     if(!oldVal) return;
     
-    window.localStorage.setItem('basket-items',JSON.stringify(newVal));
+    window.localStorage.setItem('basket-items',JSON.stringify(newVal || []));
   },{
     deep:true
   })

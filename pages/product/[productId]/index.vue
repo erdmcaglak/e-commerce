@@ -85,7 +85,7 @@
 
       setAlert({title:"Product Added To Basket",type:'success'})
 
-      window.localStorage.setItem('basket-items',JSON.stringify(basketItems));
+      window.localStorage.setItem('basket-items',JSON.stringify(basketItems || []));
       setBasketItemCount();
     }
     else{

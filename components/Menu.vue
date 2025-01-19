@@ -1,38 +1,55 @@
 <script setup>
 import {menuItems} from '@/enums/enum'
+
+const activeMenu = ref('')
+const lastActiveMenu = ref('')
+
+const setActiveMenu = (value,hard) =>{
+  if(hard){
+    lastActiveMenu.value = value;
+  }
+  else{
+    lastActiveMenu.value = activeMenu.value;
+  }
+  
+  activeMenu.value = value;
+}
 </script>
 
 <template>
   <ul class="menu-wrapper">
-    <li v-for="(item,i) in menuItems" :key="'menuItem'+i" class="menu-item-wrapper">
+    <li v-for="(item,i) in menuItems" :key="'menuItem'+i" :class="['menu-item-wrapper',activeMenu === item.value ? 'active-menu-item': '']" @mouseenter="setActiveMenu(item.value)" @mouseleave="setActiveMenu('')">
       <NuxtLink 
-        class="menu-title p10"
+        :class="['menu-title p10', item.value==='all-categories' ? 'all-category' : '']"
         :to="item.route"
         activeClass="active-main-route">
-        {{ item.title }}
+          <Icon v-if="item.icon" :name="item.icon" size="24"/>
+          <span>{{ item.title }}</span>
       </NuxtLink>
-      <ul v-if="item.children" class="menu-children menu">
-        <li v-for="(childItem,k) in item.children" :key="'childItem'+k" class="child-item-wrapper">
-          <NuxtLink 
-            class="child-menu-title p6" 
-            :to="childItem.route"
-            activeClass="active-child-route">
-            {{ childItem.title }}
-            <Icon v-if="childItem.children" class="button-icon" name="mdi:chevron-right" size="24"/>
-          </NuxtLink>
-          <ul v-if="childItem.children" class="deep-menu-children menu">
-            <li v-for="(deepChildItem,j) in childItem.children" :key="'childItem'+j" class="child-item-wrapper">
+    </li>
+    <ul v-if="[activeMenu].includes('all-categories')" class="menu" @mouseenter="setActiveMenu('all-categories')" @mouseleave="setActiveMenu('',true)">
+      <template  v-for="(item,k) in menuItems" :key="'childItem'+k">
+        <template v-if="item.children" >
+          <span class="menu-item p8 header" style="pointer-events:none">{{ item.title }}</span>
+          <template v-for="(childItem,j) in item.children" :key="'childItem'+j">
+            <NuxtLink 
+              class="menu-item p8"
+              :to="childItem.route"
+              activeClass="active-child-route">
+              {{ childItem.title }}
+            </NuxtLink>
+            <template v-for="(deepChildItem,l) in childItem.children" :key="'deepChildItem'+l">
               <NuxtLink 
-                class="deep-child-menu-title p6"
+                class="menu-item p8"
                 :to="deepChildItem.route"
                 activeClass="active-child-route">
                 {{ deepChildItem.title }}
               </NuxtLink>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
+            </template>
+          </template>
+        </template>
+      </template>
+    </ul>
   </ul>
 </template>
 
@@ -40,6 +57,7 @@ import {menuItems} from '@/enums/enum'
 .menu-wrapper{
   @include d-flex(row,space-around,center);
   border-bottom: 1px solid $gray1;
+  position: relative;
   gap: 4px;
   background-color: $white1;
   @media (hover: hover) {
@@ -58,6 +76,20 @@ import {menuItems} from '@/enums/enum'
     @include d-flex(column,flex-start,stretch);
     padding-bottom: 0;
     top: 100%;
+  }
+  .active-menu-item{
+    .menu-children{
+      @media screen and (max-width:768px) {
+        height: fit-content!important;
+      }
+      display: block!important;
+    }
+    .menu-title{
+      color: $dark15!important;
+    }
+    &::before{
+      width: 40%!important;
+    }
   }
   .menu-item-wrapper {
     flex: 1 0 auto;
@@ -103,8 +135,14 @@ import {menuItems} from '@/enums/enum'
         }
       }
     }
+
+    .active-menu-title{
+      color: $dark15!important;
+    }
     
     .menu-title{
+      @include d-flex-center;
+      gap: 8px;
       cursor: pointer;
       text-align: center;
       width: 100%;
@@ -115,105 +153,124 @@ import {menuItems} from '@/enums/enum'
         text-align: left;
       }
     }
-    .menu{
-      position: absolute;
-      background-color: $white2;
-      padding: 6px 0;
-      display: none;
-      width: 100%;
+    .all-category{
       @media screen and (max-width:768px) {
-        height: 0;
-        overflow: hidden;
-        display: block;
-        padding: 0;
-        border-top: none!important;
-        background-color: $white1;
-        position: relative;
-      }
-      .active-child-route{
-        background-color: $dark1;
-        .child-menu-title{
-          color: $white2;
-        }
-      }
-    }
-    .menu-children{
-      @extend .menu;
-      border-top: 1px solid $gray1;
-      left: 0;
-      top: 100%;
-      @media screen and (max-width:768px){
-        top: unset;
-        left: unset;
-        border-radius: 0px;
-      }
-      .child-item-wrapper{
-        text-align: left;
-        position: relative;
-        @media screen and (max-width:768px){
-          border-radius: 0px;
-        }
-        @media (hover: hover) {
-          &:hover{
-            background-color: $dark1;
-            .child-menu-title{
-              color: $white2;
-            }
-            .deep-menu-children{
-              @media screen and (max-width:768px){
-                height: fit-content;
-              }
-              display: block;
-            }
-          }
-        }
-        .child-menu-title{
-          height: 100%;
-          cursor: pointer;
-          color: $dark15;
-          display: block;
-          @include d-flex(row,space-between,center);
-          @media screen and (max-width:768px){
-            padding-left: 18px;
-          }
-        }
-        .deep-menu-children{
-          @extend .menu;
-          top: -6px;
-          &:not(:last-child){
-            left: 100%;
-          }
-          &:last-child{
-            right: 100%;
-          }
-          @media screen and (max-width:768px){
-            top: unset!important;
-            left: unset!important;
-            right: unset!important;
-            border-radius: 0px;
-          }
-          .active-deep-child-route{
-            background-color: $gray4;
-            .child-menu-title{
-              color: $white2;
-            }
-          }
-          .deep-child-menu-title{
-            height: 100%;
-            cursor: pointer;
-            color: $dark15;
-            display: block;
-            &:hover{
-              background-color: $gray4;
-              color: $white2;
-            }
-            @media screen and (max-width:768px){
-              padding-left: 28px;
-            }
-          }
-        }
+        display: none!important;
       }
     }
   }
+  .menu{
+    position: absolute;
+    background-color: $white1;
+    border-left: 1px solid $gray1;
+    border-right: 1px solid $gray1;
+    border-bottom: 1px solid $gray1;
+    padding: 6px 0;
+    width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 100%;
+    @include d-flex(column,flex-start,flex-start);
+    flex-wrap: wrap;
+    max-height: 310px;
+    @media screen and (max-width:768px) {
+      height: 0;
+      overflow: hidden;
+      display: block;
+      padding: 0;
+      border-top: none!important;
+      background-color: $white1;
+      position: relative;
+    }
+    .menu-item{
+      color: $dark15;
+      &:hover{
+        text-decoration: underline;
+        color: $danger_orange;
+      }
+    }
+    .header{
+      color: $danger_orange!important;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+  }
+    // .menu-children{
+    //   @extend .menu;
+    //   border-top: 1px solid $gray1;
+    //   left: 0;
+    //   top: 100%;
+    //   @media screen and (max-width:768px){
+    //     top: unset;
+    //     left: unset;
+    //     border-radius: 0px;
+    //   }
+    //   .child-item-wrapper{
+    //     text-align: left;
+    //     position: relative;
+    //     @media screen and (max-width:768px){
+    //       border-radius: 0px;
+    //     }
+    //     @media (hover: hover) {
+    //       &:hover{
+    //         background-color: $dark1;
+    //         .child-menu-title{
+    //           color: $white2;
+    //         }
+    //         .deep-menu-children{
+    //           @media screen and (max-width:768px){
+    //             height: fit-content;
+    //           }
+    //           display: block;
+    //         }
+    //       }
+    //     }
+    //     .child-menu-title{
+    //       height: 100%;
+    //       cursor: pointer;
+    //       color: $dark15;
+    //       display: block;
+    //       @include d-flex(row,space-between,center);
+    //       @media screen and (max-width:768px){
+    //         padding-left: 18px;
+    //       }
+    //     }
+    //     .deep-menu-children{
+    //       @extend .menu;
+    //       top: -6px;
+    //       &:not(:last-child){
+    //         left: 100%;
+    //       }
+    //       &:last-child{
+    //         right: 100%;
+    //       }
+    //       @media screen and (max-width:768px){
+    //         top: unset!important;
+    //         left: unset!important;
+    //         right: unset!important;
+    //         border-radius: 0px;
+    //       }
+    //       .active-deep-child-route{
+    //         background-color: $gray4;
+    //         .child-menu-title{
+    //           color: $white2;
+    //         }
+    //       }
+    //       .deep-child-menu-title{
+    //         height: 100%;
+    //         cursor: pointer;
+    //         color: $dark15;
+    //         display: block;
+    //         &:hover{
+    //           background-color: $gray4;
+    //           color: $white2;
+    //         }
+    //         @media screen and (max-width:768px){
+    //           padding-left: 28px;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 }
 </style>

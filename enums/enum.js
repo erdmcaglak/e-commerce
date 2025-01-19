@@ -13,6 +13,10 @@ export const footerMenuItems=[
 ]
 
 export const menuItems=[
+  {
+    title:'All Categories',value:'all-categories',
+    icon:'mdi:format-list-bulleted',
+  },
   {title:'Electronics',value:'electronics',route:'/category/electronics',children:[
     {title:'Smart Phones',value:'smartphones',route:'/category/electronics/smartphones',options:['color']},
     {title:'Laptops',value:'laptops',route:'/category/electronics/laptops',options:['color']},
@@ -28,16 +32,16 @@ export const menuItems=[
   ]},
   {title:'Clothes',value:'clothes',route:'/category/clothes',children:[
     {title:'Women',value:'women',route:'/category/clothes/women',children:[
-      {title:'Dresses',value:'womens-dresses',route:'/category/clothes/womens/dresses',options:['default','color']},
-      {title:'Shoes',value:'womens-shoes',route:'/category/clothes/womens/shoes',options:['number','color']},
-      {title:'Watches',value:'womens-watches',route:'/category/clothes/womens/watches',options:['color']},
-      {title:'Bags',value:'womens-bags',route:'/category/clothes/womens/bags',options:['color']},
-      {title:'Jewellery',value:'womens-jewellery',route:'/category/clothes/womens/jewellery'},
+      {title:'Women Dresses',value:'womens-dresses',route:'/category/clothes/womens/dresses',options:['default','color']},
+      {title:'Women Shoes',value:'womens-shoes',route:'/category/clothes/womens/shoes',options:['number','color']},
+      {title:'Women Watches',value:'womens-watches',route:'/category/clothes/womens/watches',options:['color']},
+      {title:'Women Bags',value:'womens-bags',route:'/category/clothes/womens/bags',options:['color']},
+      {title:'Women Jewellery',value:'womens-jewellery',route:'/category/clothes/womens/jewellery'},
     ]},
     {title:'Men',value:'mens',route:'/category/clothes/men',children:[
-      {title:'Shirts',value:'mens-shirts',route:'/category/clothes/mens/shirts',options:['default','color']},
-      {title:'Shoes',value:'mens-shoes',route:'/category/clothes/mens/shoes',options:['number','color']},
-      {title:'Watches',value:'mens-watches',route:'/category/clothes/mens/watches',options:['color']},
+      {title:'Men Shirts',value:'mens-shirts',route:'/category/clothes/mens/shirts',options:['default','color']},
+      {title:'Men Shoes',value:'mens-shoes',route:'/category/clothes/mens/shoes',options:['number','color']},
+      {title:'Men Watches',value:'mens-watches',route:'/category/clothes/mens/watches',options:['color']},
     ]},
   ]},
   {title:'Sale',value:'sale',route:'/category/sale',children:[
