@@ -4,10 +4,8 @@
 //TODO Menü rengi değiştirilecek ve xp görünümünden kurtulunacak
 //TODO Menü iyileştirmesi yapılacak
 //TODO Mobilde child menüler açılabilir yapılacak, açılabilir olanlarla arrow eklenecek
-//TODO attribute mapping (v-bind="item"). Response için map oluşturulup sadece item bilgisi yollanacak
 //TODO HP deki bannerler responsive göre düzenlenecek (mobilde resimin sol tarafı gösterilecek)
 //TODO Sayfalarda scroll olduğunda sağ aşağıda yukarı yönlendirme butonu koyulacak
-//TODO Main logoya redirect eklenecek
 //TODO 404 page yapılacak
 //TODO SearchBox yapılacak
 //TODO Hoverlar @media ile kapsancak
@@ -16,7 +14,6 @@
 //TODO herhangi bir sayfada filtre uygulandığında path'e query olarak eklenecek ve query'e göre de filtre uygulanabilecek
 //TODO filtrelerde arama yapılabilinecek
 //TODO axioslar try-catch ile kapsanacak
-//TODO Herhangi bir sayfada sayfa bulunmazsa 404 page yönlenmesi yapılacak
 //TODO pdp sayfasına yorumlar eklenecek
 //TODO pdp sayfasına 2. bir widget eklenecek
 //TODO utils içerisindeki fonksiyonların yerleri düzenlenecek 
@@ -27,4 +24,3 @@
 //TODO sepet sayfasında freeShipping için fiyat limiti koyulacak
 //TODO statik veriler enum içerisine taşınacak
 //TODO dummyjson'a yeni ürünler eklenmiş, bunlara göre tekrar düzenleme yap
-//TODO sepet sayfasında quantity sıfıra indirilecilecek ve 0 olduğunda silincek

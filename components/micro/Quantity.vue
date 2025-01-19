@@ -2,7 +2,7 @@
   import {watch} from 'vue' 
   const model = defineModel('model');
   const props = defineProps({
-    min:{type:[Number,String],default:1},
+    min:{type:[Number,String],default:0},
     max:{type:[Number,String],default:100}
   })
   const decreaseQuantity = () =>{

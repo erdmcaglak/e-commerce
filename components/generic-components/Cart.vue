@@ -20,9 +20,9 @@
     hideEdit:{type:Boolean,default:false}
   })
 
-  const removeTriggerFunc = () =>{
-    emit('removeTrigger')
-  }
+  watch(quantity,()=>{
+    quantity.value === 0 && emit('removeTrigger')
+  })
 </script>
 
 <template>
@@ -57,7 +57,6 @@
             v-if="props.row && !props.hideEdit"
             v-model:model="quantity"
             :max="props.stock"
-            :min="1"
           />
           <div class="cart-item-price-wrapper">
             <div v-if="props.oldPrice && (!props.row || !props.hideEdit)" class="old-price">
