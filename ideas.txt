@@ -1,6 +1,5 @@
 //TODO Tüm sayfalar küçük componentlere bölünecek
 //TODO HP deki bannerler responsive göre düzenlenecek (mobilde resimin sol tarafı gösterilecek)
-//TODO Sayfalarda scroll olduğunda sağ aşağıda yukarı yönlendirme butonu koyulacak
 //TODO 404 page yapılacak
 //TODO SearchBox yapılacak
 //TODO Hoverlar @media ile kapsancak
