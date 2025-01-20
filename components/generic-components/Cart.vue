@@ -138,15 +138,17 @@
       min-height: 200px;
       height: 200px;
     }
-    &:hover{
-      .second-image-wrapper{
-        z-index: 1;
-        width: 100%;
-        height: 100%;
-      }
-      .first-image-wrapper{
-        width: 99%;
-        height: 99%;
+    @media (hover: hover){
+      &:hover{
+        .second-image-wrapper{
+          z-index: 1;
+          width: 100%;
+          height: 100%;
+        }
+        .first-image-wrapper{
+          width: 99%;
+          height: 99%;
+        }
       }
     }
     .first-image-wrapper{
@@ -185,6 +187,7 @@
       height: 45px;
       @include d-flex(row,flex-start,center);
        display: -webkit-box;
+       line-clamp: 2;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
       overflow: hidden;
@@ -202,8 +205,10 @@
       min-height: 50px;
       @include d-flex(row,flex-start,flex-start);
       gap: 4px;
-      &:hover{
-        text-decoration: underline;
+      @media (hover: hover){
+        &:hover{
+          text-decoration: underline;
+        }
       }
       p{
         color: $dark10;
@@ -243,10 +248,12 @@
     max-width: 100px!important;
     height: 100px!important;
     width: 100px!important;
-    &:hover{
-      .first-image-wrapper{
-        width:100%!important;
-        height: 100%!important;
+    @media (hover: hover){
+      &:hover{
+        .first-image-wrapper{
+          width:100%!important;
+          height: 100%!important;
+        }
       }
     }
   }

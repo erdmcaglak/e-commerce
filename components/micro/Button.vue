@@ -1,4 +1,5 @@
 <script setup>
+  import {computed} from 'vue' 
   const props = defineProps({
     title:{type:String,default:''},
     fontColor:{type:String,default:'#000'},
@@ -51,9 +52,11 @@
   cursor: pointer;
   background-color:var(--background);
   transition: all .1s ease;
-  &:hover{
-    background-color: var(--hovered-bgc);
-    color: var(--hovered-font-color);
+  @media (hover: hover){
+    &:hover{
+      background-color: var(--hovered-bgc);
+      color: var(--hovered-font-color);
+    }
   }
 }
 .rounded{

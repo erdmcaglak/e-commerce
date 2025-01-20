@@ -252,11 +252,13 @@
                 cursor: pointer;
                 transition: all .2s ease;
                 @include d-flex(row,space-between,center);
-                &:hover{
-                  color: $red5;
-                  background-color: $white1;
-                  .filter-item-header-arrow{
+                @media (hover: hover){
+                  &:hover{
                     color: $red5;
+                    background-color: $white1;
+                    .filter-item-header-arrow{
+                      color: $red5;
+                    }
                   }
                 }
                 .filter-item-header-arrow{
@@ -287,8 +289,10 @@
                   padding: 4px;
                   position: relative;
                   transition: all .2s ease;
-                  &:hover{
-                    background-color: $white2;
+                  @media (hover: hover){
+                    &:hover{
+                      background-color: $white2;
+                    }
                   }
                   
                   .name{

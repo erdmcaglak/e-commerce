@@ -66,8 +66,10 @@
       cursor: pointer;
       transition: all .2s ease;
       z-index: 9999;
-      &:hover{
-        background-color: $warning_blue;
+      @media (hover: hover){
+        &:hover{
+          background-color: $warning_blue;
+        }
       }
     }
   }

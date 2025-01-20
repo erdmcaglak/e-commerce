@@ -140,9 +140,11 @@ const getAppList = [
               padding: 4px;
               color: $white1!important;
               transition: all .2s ease;
-              &:hover{
-                color: $white1!important;
-                transform: scale(1.1);
+              @media (hover: hover){
+                &:hover{
+                  color: $white1!important;
+                  transform: scale(1.1);
+                }
               }
             }
           }

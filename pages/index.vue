@@ -17,14 +17,14 @@
 <template>
   <div class="home-page">
     <NuxtLink to="/category/sale" class="hp-banner">
-      <img src="/sales.jpg" alt="">
+      <img class="img-1" loading="lazy" src="/sales.jpg" alt="">
     </NuxtLink>
     <Slider
       sliderTitle="Recomended For You"
       :sliderList="recomendedForYou"
       />
     <LazyNuxtLink to="/category/clothes" class="hp-banner">
-      <img loading="lazy" src="/banner_2.png" alt=""/>
+      <img class="img-2" loading="lazy" src="/banner_2.png" alt=""/>
     </LazyNuxtLink>
     <Slider
       sliderTitle="Shop The Look"
@@ -45,13 +45,38 @@
   gap: 20px;
   @include d-flex(column,flex-start,stretch);
   .hp-banner{
+    position: relative;
     @include d-flex(row,center,flex-start);
     overflow: hidden;
     cursor: pointer;
     border-radius: 4px;
     max-height: 800px;
-    img{
-      width: 100%;
+    @media screen and (max-width:768px) {
+      min-height: 500px;
+      max-height: 500px;
+    }
+    .img-1{
+      height: 100%;
+      @media screen and (min-width:769px) {
+        width: 100%;
+      }
+      @media screen and (max-width:768px) {
+        position: absolute;
+        right: -350px;
+        top: 0;
+        
+      }
+    }
+    .img-2{
+      height: 100%;
+      @media screen and (min-width:769px) {
+        width: 100%;
+      }
+      @media screen and (max-width:768px) {
+        position: absolute;
+        left: -130px;
+        top: 0;
+      }
     }
   }
 }

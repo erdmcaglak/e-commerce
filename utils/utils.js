@@ -68,9 +68,15 @@ const _setOldPrice = (prods) =>{
 }
 
 export const getProducts = async () =>{
-  const res = await axiosHolder.get(`/products?limit=15&skip=${Math.floor(Math.random() *75) +1}`);
+  try{
+    const res = await axiosHolder.get(`/products?limit=15&skip=${Math.floor(Math.random() *75) +1}`);
 
-  return _setOldPrice(res.data.products);
+    return _setOldPrice(res.data.products);
+  }catch(e){
+    console.error(e);
+    return [];
+  }
+  
 }
 
 export const getRoute = (index,breadCrumbArr,startWith='/category')=>{
@@ -91,30 +97,42 @@ export const kebabToCapitalize = (item)=>{
 }
 
 export const getCategoryProducts = async (category,limit)=>{
-  const categories = _getAccessableCategories(category);
-  const resultArr = [];
+  try{
+    const categories = _getAccessableCategories(category);
+    const resultArr = [];
 
-  if(categories.length === 0){
-    const res = await axiosHolder.get(`/products/category/${category}`);
-  
-    resultArr.push(...res.data.products)
-  }
-  else{
-    for(let _category of categories){
-      const res = await axiosHolder.get(`/products/category/${_category}`);
-  
+    if(categories.length === 0){
+      const res = await axiosHolder.get(`/products/category/${category}`);
+    
       resultArr.push(...res.data.products)
     }
+    else{
+      for(let _category of categories){
+        const res = await axiosHolder.get(`/products/category/${_category}`);
+    
+        resultArr.push(...res.data.products)
+      }
+    }
+    
+    
+    return limit ? _setOldPrice(_setProductsLength(resultArr)).slice(0,limit) : _setOldPrice(_setProductsLength(resultArr));
+  }catch(e){
+    console.error(e);
+    return [];
   }
   
-  
-  return limit ? _setOldPrice(_setProductsLength(resultArr)).slice(0,limit) : _setOldPrice(_setProductsLength(resultArr));
 }
 
 export const getProductDetail = async (productId) =>{
-  const prodDetail = await axiosHolder.get(`/products/${productId}`);
+  try{
+    const prodDetail = await axiosHolder.get(`/products/${productId}`);
 
-  return _setOldPrice(prodDetail?.data) || {}
+    return _setOldPrice(prodDetail?.data) || {}
+  }catch(e){
+    console.error(e);
+    return {};
+  }
+  
 }
 
 export const getProductCategory = (childCategory)=>{
@@ -156,13 +174,19 @@ export const priceFixer = (price)=>{
 }
 
 export const customHttp = async (status,response) =>{
-  let resMessage='';
-  if(response){
-    resMessage = '/'+response
-  }
-  const res = await axiosHolder.get(`/http/${status}${resMessage}?delay=2000`);
+  try{
+    let resMessage='';
+    if(response){
+      resMessage = '/'+response
+    }
+    const res = await axiosHolder.get(`/http/${status}${resMessage}?delay=2000`);
 
-  return res.data;
+    return res.data;
+  }catch(e){
+    console.error(e);
+    return true;
+  }
+  
 }
 
 export const generateTaxId = (length=10) => {

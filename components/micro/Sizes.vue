@@ -110,9 +110,11 @@
       transition: all .1s ease;
       user-select: none;
       cursor: pointer;
-      &:hover{
-        border-color: $red3;
-        color: $red3;
+      @media (hover: hover){
+        &:hover{
+          border-color: $red3;
+          color: $red3;
+        }
       }
       .size-color{
         border-radius: 999px;

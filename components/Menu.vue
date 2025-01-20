@@ -184,9 +184,11 @@ const setActiveMenu = (value,hard) =>{
     }
     .menu-item{
       color: $dark15;
-      &:hover{
-        text-decoration: underline;
-        color: $danger_orange;
+      @media (hover: hover){
+        &:hover{
+          text-decoration: underline;
+          color: $danger_orange;
+        }
       }
     }
     .header{
@@ -195,82 +197,5 @@ const setActiveMenu = (value,hard) =>{
       font-weight: 600;
     }
   }
-    // .menu-children{
-    //   @extend .menu;
-    //   border-top: 1px solid $gray1;
-    //   left: 0;
-    //   top: 100%;
-    //   @media screen and (max-width:768px){
-    //     top: unset;
-    //     left: unset;
-    //     border-radius: 0px;
-    //   }
-    //   .child-item-wrapper{
-    //     text-align: left;
-    //     position: relative;
-    //     @media screen and (max-width:768px){
-    //       border-radius: 0px;
-    //     }
-    //     @media (hover: hover) {
-    //       &:hover{
-    //         background-color: $dark1;
-    //         .child-menu-title{
-    //           color: $white2;
-    //         }
-    //         .deep-menu-children{
-    //           @media screen and (max-width:768px){
-    //             height: fit-content;
-    //           }
-    //           display: block;
-    //         }
-    //       }
-    //     }
-    //     .child-menu-title{
-    //       height: 100%;
-    //       cursor: pointer;
-    //       color: $dark15;
-    //       display: block;
-    //       @include d-flex(row,space-between,center);
-    //       @media screen and (max-width:768px){
-    //         padding-left: 18px;
-    //       }
-    //     }
-    //     .deep-menu-children{
-    //       @extend .menu;
-    //       top: -6px;
-    //       &:not(:last-child){
-    //         left: 100%;
-    //       }
-    //       &:last-child{
-    //         right: 100%;
-    //       }
-    //       @media screen and (max-width:768px){
-    //         top: unset!important;
-    //         left: unset!important;
-    //         right: unset!important;
-    //         border-radius: 0px;
-    //       }
-    //       .active-deep-child-route{
-    //         background-color: $gray4;
-    //         .child-menu-title{
-    //           color: $white2;
-    //         }
-    //       }
-    //       .deep-child-menu-title{
-    //         height: 100%;
-    //         cursor: pointer;
-    //         color: $dark15;
-    //         display: block;
-    //         &:hover{
-    //           background-color: $gray4;
-    //           color: $white2;
-    //         }
-    //         @media screen and (max-width:768px){
-    //           padding-left: 28px;
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
 }
 </style>

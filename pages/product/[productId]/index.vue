@@ -245,6 +245,7 @@
         img{
           object-fit: contain;
           width: 100%;
+          height: 100%;
         }
       }
       .product-images-wrapper{
@@ -266,6 +267,7 @@
             border: 2px solid transparent;
             .small-image{
               width: 100%;
+              height: 100%;
               object-fit: contain;
             }
           }
@@ -403,9 +405,11 @@
           color: $white1;
           background-color: $dark13;
           border: 1px solid $dark13;
-          &:hover{
-            background-color: transparent;
-            color: $dark13;
+          @media (hover: hover){
+            &:hover{
+              background-color: transparent;
+              color: $dark13;
+            }
           }
         }
       }
