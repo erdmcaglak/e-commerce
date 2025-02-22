@@ -1,5 +1,4 @@
 //TODO Tüm sayfalar küçük componentlere bölünecek
-//TODO 404 page yapılacak
 //TODO SearchBox yapılacak
 //TODO her sayfa için loading template oluşturulacak
 //TODO kategori sayfasında ürün olmazsa 'no data found' yazısı eklenecek
