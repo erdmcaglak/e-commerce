@@ -99,6 +99,7 @@ export const kebabToCapitalize = (item)=>{
 export const getCategoryProducts = async (category,limit)=>{
   try{
     const categories = _getAccessableCategories(category);
+    console.log({categories})
     const resultArr = [];
 
     if(categories.length === 0){
@@ -199,4 +200,46 @@ export const generateTaxId = (length=10) => {
   }
   
   return result.toUpperCase();
+}
+
+export const getCategories = async () =>{
+  try{
+    const categories = await axiosHolder.get(`/products/categories`);
+    
+    return categories.data;
+  }catch(err){
+    console.error(err);
+    return [];
+  }
+}
+
+
+export const getRandomCategories = async (count=4) =>{
+  try{
+    const categories = await axiosHolder.get(`/products/categories`);
+    const res = [];
+        
+    const randomCatPicker = (arr) =>{
+      if(res.length === count) return;
+
+      let rand = Math.round(Math.random() * (arr.length-1));
+      
+      if(!res.includes(arr[rand])){
+
+        console.log({cat:arr[rand]})
+
+        res.push(arr[rand]);
+        arr.splice(rand,1);
+      }
+      
+      randomCatPicker(arr);
+    }
+    
+    randomCatPicker(categories.data.map(e=>e.slug));
+    
+    return res;
+  }catch(err){
+    console.error(err);
+    return [];
+  }
 }

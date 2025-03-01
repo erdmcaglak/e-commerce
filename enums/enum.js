@@ -19,16 +19,21 @@ export const menuItems=[
   },
   {title:'Electronics',value:'electronics',route:'/category/electronics',children:[
     {title:'Smart Phones',value:'smartphones',route:'/category/electronics/smartphones',options:['color']},
+    {title:'Tablets',value:'tablets',route:'/category/electronics/tablets',options:['color']},
     {title:'Laptops',value:'laptops',route:'/category/electronics/laptops',options:['color']},
+    {title:'Mobile Accessories',value:'mobile-accessories',route:'/category/electronics/mobile-accessories',options:['color']},
+    
   ]},
   {title:'Personal Care',value:'personal-care',route:'/category/personal-care',children:[
     {title:'Fragrances',value:'fragrances',route:'/category/furniture-home/fragrances'},
     {title:'Skin Care',value:'skincare',route:'/category/furniture-home/skincare'},
+    {title:'Beauty',value:'beauty',route:'/category/furniture-home/beauty'},
   ]},
   {title:'Furniture & Home',value:'furniture-home',route:'/category/furniture-home',children:[
     {title:'Home Decoration',value:'home-decoration',route:'/category/furniture-home/home-decoration'},
     {title:'Lighting',value:'lighting',route:'/category/furniture-home/lighting',options:['color']},
     {title:'Furtinure',value:'furniture',route:'/category/furniture-home/furniture',options:['color']},
+    {title:'Kitchen Accessories',value:'kitchen-accessories',route:'/category/furniture-home/kitchen-accessories'},
   ]},
   {title:'Clothes',value:'clothes',route:'/category/clothes',children:[
     {title:'Women',value:'women',route:'/category/clothes/women',children:[
@@ -47,9 +52,10 @@ export const menuItems=[
   {title:'Sale',value:'sale',route:'/category/sale',children:[
     {title:'Tops',value:'tops',route:'/category/sale/tops',options:['default','color']},
     {title:'Groceries',value:'groceries',route:'/category/sale/groceries'},
-    {title:'Automotive',value:'automotive',route:'/category/sale/automotive',options:['color']},
+    {title:'Vehicle',value:'vehicle',route:'/category/sale/vehicle',options:['color']},
     {title:'Motorcycle',value:'motorcycle',route:'/category/sale/motorcycle',options:['color']},
     {title:'Sunglasses',value:'sunglasses',route:'/category/sale/sunglasses',options:['color']},
+    {title:'Sport Accessories',value:'sport-accessories',route:'/category/electronics/sport-accessories'},
   ]},
 ]
 

@@ -1,11 +1,19 @@
 <script setup>
+  import {getRandomCategories} from '@/utils/utils'
   import {ref,inject} from 'vue';
   const props = defineProps({
     modeCheckout:{type:Boolean,default:false}
   })
 
   const isClickedHamMenu = ref(false);
+  const isOpenedSearch = ref(false);
   const {basketItemCount} = inject('basketItemCount')
+
+  const searchBoxCategories = ref([]);  
+
+  const openSearch = () =>{
+    isOpenedSearch.value = true;
+  }
 
   const toggleMenu = () =>{
     isClickedHamMenu.value = !isClickedHamMenu.value
@@ -13,7 +21,7 @@
 
     if(isClickedHamMenu.value){
       menu.classList.add('slide-menu-ttb');
-      if(menu.classList.contains('slide-menu-btt')){
+      if(menu.classList.contains('slide-menu-btt')){       
         menu.classList.remove('slide-menu-btt')
       }
     }
@@ -25,8 +33,15 @@
       setTimeout(()=>{
         menu.classList.remove('slide-menu-btt');
       },150)
-    }
-  }
+    }     
+  }   
+  
+  onMounted(async () => {
+    searchBoxCategories.value = await getRandomCategories(4);
+    window.addEventListener('click',()=>{
+      isOpenedSearch.value && (isOpenedSearch.value = false);
+    })
+  })
 </script>
 <template>
   <div class="container">
@@ -34,9 +49,12 @@
       <NuxtLink class="logo-wrapper" to="/">
         <img src="/logo.png" alt="Artisan">
       </NuxtLink>
-      <div v-if="!props.modeCheckout" class="search-wrapper">
+      <div v-if="!props.modeCheckout" class="search-wrapper" @click.stop>
         <Icon name="mdi:magnify" color="black" size="24"/>
-        <input type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+        <input @focus="openSearch" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+        <transition name="fade"> 
+          <SearchBox v-if="isOpenedSearch" :categories="searchBoxCategories"/>
+        </transition>
       </div>
       <div class="app-bar-actions">
         <div v-if="!props.modeCheckout" :class="['hamburger-wrapper', isClickedHamMenu ? 'close' : '']" @click="toggleMenu">
@@ -114,6 +132,7 @@
       }
     }
     .search-wrapper{
+      position: relative;
       background-color: $white1;
       width: 35%;
       gap: 6px;

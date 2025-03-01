@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue'
+  import {ref} from 'vue'
   const alert = ref({});
   const basketItemCount = ref(0)
   const route = useRoute()
