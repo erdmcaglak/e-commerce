@@ -26,7 +26,7 @@ export const menuItems=[
   ]},
   {title:'Personal Care',value:'personal-care',route:'/category/personal-care',children:[
     {title:'Fragrances',value:'fragrances',route:'/category/furniture-home/fragrances'},
-    {title:'Skin Care',value:'skincare',route:'/category/furniture-home/skincare'},
+    {title:'Skin Care',value:'skin-care',route:'/category/furniture-home/skincare'},
     {title:'Beauty',value:'beauty',route:'/category/furniture-home/beauty'},
   ]},
   {title:'Furniture & Home',value:'furniture-home',route:'/category/furniture-home',children:[
@@ -55,7 +55,7 @@ export const menuItems=[
     {title:'Vehicle',value:'vehicle',route:'/category/sale/vehicle',options:['color']},
     {title:'Motorcycle',value:'motorcycle',route:'/category/sale/motorcycle',options:['color']},
     {title:'Sunglasses',value:'sunglasses',route:'/category/sale/sunglasses',options:['color']},
-    {title:'Sport Accessories',value:'sport-accessories',route:'/category/electronics/sport-accessories'},
+    {title:'Sport Accessories',value:'sports-accessories',route:'/category/electronics/sport-accessories'},
   ]},
 ]
 

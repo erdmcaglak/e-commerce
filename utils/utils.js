@@ -67,9 +67,9 @@ const _setOldPrice = (prods) =>{
   return prods
 }
 
-export const getProducts = async () =>{
+export const getProducts = async (limit=15) =>{
   try{
-    const res = await axiosHolder.get(`/products?limit=15&skip=${Math.floor(Math.random() *75) +1}`);
+    const res = await axiosHolder.get(`/products?limit=${limit}&skip=${Math.floor(Math.random() *75) +1}`);
 
     return _setOldPrice(res.data.products);
   }catch(e){
@@ -99,7 +99,7 @@ export const kebabToCapitalize = (item)=>{
 export const getCategoryProducts = async (category,limit)=>{
   try{
     const categories = _getAccessableCategories(category);
-    console.log({categories})
+
     const resultArr = [];
 
     if(categories.length === 0){
@@ -136,7 +136,7 @@ export const getProductDetail = async (productId) =>{
   
 }
 
-export const getProductCategory = (childCategory)=>{
+export const getProductCategory = (childCategory,beauty)=>{
 
   let resStr = "";
   let isFounded = false;
@@ -145,11 +145,11 @@ export const getProductCategory = (childCategory)=>{
     for(let item of arr){
       resStr = ''
       if(item.children){
-        resStr += '||' + item.value
+        resStr += '||' + (beauty ? item.title :item.value)
         resStr += deepFunc(item.children)
       }
       else if(item.value === childCategory){
-        resStr+= '||'+ item.value
+        resStr+= '||'+ (beauty ? item.title :item.value)
         categoryObj = item;
         isFounded=true;
         return resStr;
@@ -160,6 +160,7 @@ export const getProductCategory = (childCategory)=>{
   }
 
   deepFunc(menuItems);
+  
   if(resStr.startsWith('||')){
     resStr.replace('||','')
   }
@@ -213,7 +214,6 @@ export const getCategories = async () =>{
   }
 }
 
-
 export const getRandomCategories = async (count=4) =>{
   try{
     const categories = await axiosHolder.get(`/products/categories`);
@@ -225,9 +225,6 @@ export const getRandomCategories = async (count=4) =>{
       let rand = Math.round(Math.random() * (arr.length-1));
       
       if(!res.includes(arr[rand])){
-
-        console.log({cat:arr[rand]})
-
         res.push(arr[rand]);
         arr.splice(rand,1);
       }
@@ -242,4 +239,10 @@ export const getRandomCategories = async (count=4) =>{
     console.error(err);
     return [];
   }
+}
+
+export const searchProd = async (sQuery)=>{
+  const res = await axiosHolder.get(`/products/search?q=${sQuery}&limit=8`);
+
+  return res.data
 }

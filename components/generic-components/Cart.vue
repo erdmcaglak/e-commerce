@@ -4,6 +4,7 @@
   const emit = defineEmits(['removeTrigger'])
 
   const props = defineProps({
+    small:{type:Boolean,default:false},
     image:{type:String,required:true},
     secondImage:{type:String,default:''},
     title:{type:String,required:true},

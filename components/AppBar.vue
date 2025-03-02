@@ -1,5 +1,5 @@
 <script setup>
-  import {getRandomCategories} from '@/utils/utils'
+  import {getRandomCategories,getProducts,searchProd} from '@/utils/utils'
   import {ref,inject} from 'vue';
   const props = defineProps({
     modeCheckout:{type:Boolean,default:false}
@@ -10,6 +10,11 @@
   const {basketItemCount} = inject('basketItemCount')
 
   const searchBoxCategories = ref([]);  
+  const searchBoxCatProds = ref({});
+  const search = ref('');
+  const searchProds = ref([]);
+
+  const _debounce = ref();
 
   const openSearch = () =>{
     isOpenedSearch.value = true;
@@ -38,10 +43,27 @@
   
   onMounted(async () => {
     searchBoxCategories.value = await getRandomCategories(4);
+    for(let item of searchBoxCategories.value){
+      let key = getProductCategory(item).categoryArr.filter(e=>e).join('||');
+      let data = await getCategoryProducts(key.split('||').at(-1),8);
+      searchBoxCatProds.value[key] = data;
+    }
+    searchBoxCatProds.value['random'] = await getProducts(8);
     window.addEventListener('click',()=>{
       isOpenedSearch.value && (isOpenedSearch.value = false);
     })
   })
+
+  watch(search, (newValue, oldValue) => {
+    if(_debounce.value){
+      clearTimeout(_debounce.value);
+    }
+
+    _debounce.value = setTimeout(async ()=>{
+      searchProds.value = await searchProd(newValue);
+    },300)
+    
+  });
 </script>
 <template>
   <div class="container">
@@ -51,9 +73,9 @@
       </NuxtLink>
       <div v-if="!props.modeCheckout" class="search-wrapper" @click.stop>
         <Icon name="mdi:magnify" color="black" size="24"/>
-        <input @focus="openSearch" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+        <input @focus="openSearch" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
         <transition name="fade"> 
-          <SearchBox v-if="isOpenedSearch" :categories="searchBoxCategories"/>
+          <SearchBox v-if="isOpenedSearch" :categories="searchBoxCategories" :products="searchBoxCatProds"/>
         </transition>
       </div>
       <div class="app-bar-actions">
