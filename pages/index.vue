@@ -17,23 +17,26 @@
 <template>
   <div class="home-page">
     <NuxtLink to="/category/sale" class="hp-banner">
-      <img class="img-1" loading="lazy" src="/sales.jpg" alt="">
+      <ImageLoader src="/sales.jpg" alt=""/>
     </NuxtLink>
     <Slider
       sliderTitle="Recomended For You"
       :sliderList="recomendedForYou"
-      />
-    <LazyNuxtLink to="/category/clothes" class="hp-banner">
-      <img class="img-2" loading="lazy" src="/banner_2.png" alt=""/>
-    </LazyNuxtLink>
+    />
+    <NuxtLink to="/category/clothes" class="hp-banner">
+      <div class="img-2">
+        <ImageLoader src="/banner_2.png" alt=""/>
+      </div>
+      
+    </NuxtLink>
     <Slider
       sliderTitle="Shop The Look"
       :sliderList="shopTheLook"
-      />
+    />
     <Slider
       sliderTitle="Our Picks"
       :sliderList="ourPicks"
-      />
+    />
   </div>
   
 </template>
@@ -51,6 +54,7 @@
     cursor: pointer;
     border-radius: 4px;
     max-height: 800px;
+    min-height: 250px;
     @media screen and (max-width:768px) {
       min-height: 500px;
       max-height: 500px;
@@ -64,7 +68,6 @@
         position: absolute;
         right: -350px;
         top: 0;
-        
       }
     }
     .img-2{

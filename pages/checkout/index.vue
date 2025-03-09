@@ -160,7 +160,7 @@
       </div>
       <Cart
         v-for="(item,i) in cartItems"
-        :key="'checkoutItem'+i"
+        :key="'checkoutItem'+i + item.id"
         row
         hideEdit
         :image="getImage(item.item)"

@@ -51,17 +51,12 @@ const _setProductsLength = (arr) =>{
 }
 
 const _setOldPrice = (prods) =>{
-  if(Array.isArray(prods)){
-    prods?.forEach(item=>{
-      item.randomImageIndex = Math.floor(Math.random()*item.images.length);
-      item.oldPrice = (item.price + parseFloat(((item.price / 100) * Math.round(item.discountPercentage)).toFixed(2))).toFixed(2)
-      item.price = item.price.toFixed(2)
-    })
-  }
-  else{
-    prods.randomImageIndex = Math.floor(Math.random()*prods.images.length);
-    prods.oldPrice = (prods.price + parseFloat(((prods.price / 100) * Math.round(prods.discountPercentage)).toFixed(2))).toFixed(2)
-    prods.price = prods.price.toFixed(2);
+  for(let i=0;i<prods.length;i++){
+    prods[i].randomImageIndex = Math.floor(Math.random() * (prods[i].images?.length || 1));
+    if(Math.round((prods[i].discountPercentage || 0)) > 0){
+      prods[i].oldPrice = (prods[i].price * (1+(Math.round(prods[i].discountPercentage)/100))).toFixed(2);
+    } 
+    prods[i].price = prods[i].price.toFixed(2)
   }
   
   return prods
@@ -69,7 +64,7 @@ const _setOldPrice = (prods) =>{
 
 export const getProducts = async (limit=15) =>{
   try{
-    const res = await axiosHolder.get(`/products?limit=${limit}&skip=${Math.floor(Math.random() *75) +1}`);
+    const res = await axiosHolder.get(`/products?limit=${limit}&skip=${Math.floor(Math.random() *(150-limit)) +1}`);
 
     return _setOldPrice(res.data.products);
   }catch(e){
@@ -128,7 +123,7 @@ export const getProductDetail = async (productId) =>{
   try{
     const prodDetail = await axiosHolder.get(`/products/${productId}`);
 
-    return _setOldPrice(prodDetail?.data) || {}
+    return _setOldPrice([prodDetail?.data]) || {}
   }catch(e){
     console.error(e);
     return {};
@@ -172,7 +167,11 @@ export const getProductCategory = (childCategory,beauty)=>{
 }
 
 export const priceFixer = (price)=>{
-  return '$' + parseFloat(price).toFixed(2).replace('.',',');
+  var temp = (Math.round(price * 100) / 100).toFixed(2).toString().replace(".", ',');
+  temp = temp.replace(/(\d)(?=(\d\d\d)+(?!\d))/g,`$1.`);
+
+  //console.log("getter: " + temp);
+  return temp !== "NaN" ? `$${temp}` : "";
 }
 
 export const customHttp = async (status,response) =>{

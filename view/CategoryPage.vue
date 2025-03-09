@@ -179,7 +179,7 @@
           </div>
           <div class="category-products-content">
             <template v-if="filteredCategoryProducts.length > 0">
-              <template v-for="(item,i) in filteredCategoryProducts" :key="'categoryProds'+i">
+              <template v-for="(item,i) in filteredCategoryProducts" :key="'categoryProds'+i + item.id">
                 <Cart
                   :image="getImage(item)"
                   :secondImage="item.images[1] || ''"

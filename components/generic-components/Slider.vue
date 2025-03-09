@@ -58,8 +58,13 @@
           :slidesPerGroup="slidePerGroup"
           navigation
           space-between="10" 
+          :lazy="true"
+          :preloadImages="false"
+          :watchSlidesVisibility="true"
+          :observer="true"
+          :observeParents="true"
         >
-          <SwiperSlide v-for="(item,i) in props.sliderList" :key="'specialSlider'+i">
+          <SwiperSlide v-for="(item,i) in props.sliderList" :key="'specialSlider'+i + item.id">
             <Cart
               :image="item.images[0]"
               :secondImage="item.images[1] || ''"

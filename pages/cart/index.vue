@@ -52,7 +52,7 @@
         <div class="basket-products">
           <Cart
             v-for="(basketItem,i) in basketProds"
-            :key="'basketItem' +i"
+            :key="'basketItem' +i + item.id"
             row
             v-model:quantity="basketItem.quantity"
             :stock="basketItem.item.stock"

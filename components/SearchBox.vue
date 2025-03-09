@@ -35,9 +35,22 @@
       </div>
     </div>
     <div class="search-box-products">
-      <div class="search-box-cart" v-for="(item,i) in props.products[activeCat || 'random']" :key="'searcboxCart'+i">
+      <Cart
+        small
+        v-for="(item,i) in props.products[activeCat || 'random']" 
+        :key="'searcboxCart'+i + item.id"
+        :image="item.images[0]"
+        :secondImage="item.images[1] || ''"
+        :brand="item.brand || ''"
+        :title="item.title"
+        :price="item.price"
+        :oldPrice="item.oldPrice || 0"
+        :discount="item.discountPercentage || 1"
+        :productId="item.id.toString()"
+      />
+      <!-- <div class="search-box-cart" v-for="(item,i) in props.products[activeCat || 'random']" :key="'searcboxCart'+i">
         {{ item.title }}
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -50,7 +63,7 @@
   left: 50%;
   top: calc(100% + 1px);
   transform: translateX(-50%);
-  min-width: 700px;
+  min-width: 900px;
   min-height: 300px;
   z-index: 999;
   background-color: #fff;

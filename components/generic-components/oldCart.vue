@@ -1,5 +1,7 @@
 <script setup>
   import {priceFixer} from "@/utils/utils"
+  const quantity = defineModel('quantity')
+  const emit = defineEmits(['removeTrigger'])
 
   const props = defineProps({
     small:{type:Boolean,default:false},
@@ -18,50 +20,83 @@
     stock:{type:[Number,String]},
     hideEdit:{type:Boolean,default:false}
   })
+
+  watch(quantity,()=>{
+    quantity.value === 0 && emit('removeTrigger')
+  })
 </script>
 
 <template>
   <ClientOnly>
-    <NuxtLink :to="'/product/'+props.productId" :class="['cart-item-wrapper']">
-      <div v-if="Math.round((props.discount || 0)) > 0 && props.oldPrice && !props.small" class="cart-item-badge">
+    <NuxtLink :to="!props.row ? '/product/'+props.productId : ''" :class="['cart-item-wrapper',props.row ? 'row' : '']">
+      <div v-if="props.discount && props.oldPrice && !props.row" class="cart-item-badge">
         %{{ Math.round(props.discount) }}
       </div>
-      <div :class="['cart-item-image-wrapper',props.small ? 'small-image' : 'normal-image']">
-        <div class="first-image-wrapper">
-          <ImageLoader :src="props.image" :alt="props.title"/>
-        </div>
-        <div v-if="props.secondImage" class="second-image-wrapper">
-          <ImageLoader :src="props.secondImage" :alt="props.title"/>
-        </div>
-      </div>
-      <div :class="['cart-info-wrapper',props.small ? 'px4' : 'px8']" :style="props.small ? 'gap:2px' : ''">
-        <div v-if="!props.small" class="cart-item-brand">
-          <p :class="props.small ? 'small-text' : ''"><b>{{ props.brand }}</b></p>
-        </div>
-        <div :class="['cart-item-title']" :style="props.small ? 'height:25px;-webkit-line-clamp:1;align-items:center' : ''">
-          <p :class="props.small ? 'small-text' : ''">{{ props.title }}</p>
-        </div>
-        <div class="cart-item-price-wrapper" :style="props.small ? 'min-height:40px' : ''">
-          <div v-if="props.oldPrice" :class="['old-price',props.small ? 'small-text' : '']">
-            {{ priceFixer(props.oldPrice) }}
-          </div>
-          <div :class="['price',props.oldPrice ? 'color-red' : '',props.small ? 'small-text' : '']">
-            <span>
-              {{ priceFixer(props.price) }}
-            </span>
-          </div>
+      <div class="cart-item-image-wrapper">
+        <NuxtLink :to="props.row ? '/product/'+props.productId : ''" class="first-image-wrapper">
+          <img loading="lazy" :src="props.image" :alt="props.title">
+        </NuxtLink>
+        <div v-if="props.secondImage && !props.row" class="second-image-wrapper">
+          <img loading="lazy" class="second-image" :src="props.secondImage" :alt="props.title">
         </div>
       </div>
+      <div class="cart-info-wrapper px8">
+        <div class="names-wrapper">
+          <div class="cart-item-brand">
+            <p><b>{{ props.brand }}</b></p>
+          </div>
+          <NuxtLink :to="props.row ? '/product/'+props.productId : ''" class="cart-item-title">
+            <p>{{ props.title }} <span v-if="props.row && props.options?.size">{{props.options.size.title}}</span></p>
+          </NuxtLink>
+          <div v-if="props.row && props.options?.color" class="cart-item-color">
+            Color: 
+            <div class="color-div" :style="{backgroundColor:props.options?.color.value}"></div>
+          </div>
+        </div>
+        <div class="quantity-and-price">
+          <Quantity
+            v-if="props.row && !props.hideEdit"
+            v-model:model="quantity"
+            :max="props.stock"
+          />
+          <div class="cart-item-price-wrapper">
+            <div v-if="props.oldPrice && (!props.row || !props.hideEdit)" class="old-price">
+              {{ priceFixer(props.oldPrice) }}
+            </div>
+            <div :class="['price',props.oldPrice && !props.row ? 'color-red' : '']">
+              <span v-if="!props.row">
+                {{ priceFixer(props.price) }}
+                 
+              </span>
+              <span v-else>
+                {{ priceFixer(parseFloat((props.price * props.quantity).toFixed(2))) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <Button
+        v-if="props.row && !props.hideEdit"
+        icon="mdi:delete-outline"
+        fontSize="24px"
+        fontColor="#FF0505"
+        text
+        hoveredBackground="#FFCCCC"
+        background="transparent"
+        hoveredColor="#CC0000"
+        padding="6px"
+        rounded="999px"
+        @clickTrigger="removeTriggerFunc"
+      /> -->
     </NuxtLink>
   </ClientOnly>
 </template>
 
 <style lang="scss" scoped>
-
 .cart-item-wrapper{
   @include d-flex(column,flex-start,flex-start);
   border: 1px solid $white2;
-  border-radius: 4px;
+  
   padding: 4px;
   gap: 8px;
   position: relative;
@@ -77,8 +112,6 @@
     min-width: 50px;
     font-weight: 600;
     text-align: center;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
     &::after{
       content:"";
       position: absolute;
@@ -88,29 +121,23 @@
       top: 0;
       clip-path: polygon(50% 0, 15% 50%, 50% 100%, 0 100%, 0 50%, 0 0);
       background-color: $red12;
-    }
-  }
-  .small-image{
-    max-height: 150px;
-    min-height: 150px;
-    height: 100px;
-  }
-  .normal-image{
-    max-height: 300px;
-    min-height: 300px;
-    height: 300px;
-    @media screen and (max-width:768px) {
-      max-height: 200px;
-      min-height: 200px;
-      height: 200px;
+      
     }
   }
   .cart-item-image-wrapper{
     cursor: pointer;
     width: 100%;
     @include d-flex-center;
+    max-height: 300px;
+    min-height: 300px;
+    height: 300px;
     position: relative;
     overflow: hidden;
+    @media screen and (max-width:768px) {
+      max-height: 200px;
+      min-height: 200px;
+      height: 200px;
+    }
     @media (hover: hover){
       &:hover{
         .second-image-wrapper{
@@ -150,9 +177,6 @@
       }
     }
   }
-  .small-text{
-    font-size: 13px!important;
-  }
   .cart-info-wrapper{
     @include d-flex(column,flex-start,stretch);
     width: 100%;
@@ -160,32 +184,35 @@
     gap: 4px;
     .cart-item-brand{
       text-transform: capitalize;
-      height: 25px;
+      height: 45px;
       @include d-flex(row,flex-start,center);
+       display: -webkit-box;
+       line-clamp: 2;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
       p{
         width: 100%;
         font-size: 18px;
         color: $dark10;
         text-align: left;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 1;
-        overflow: hidden;
       }
     }
     .cart-item-title{
       text-transform: capitalize;
       cursor: pointer;
-      height: 50px;
+      @extend .cart-item-brand;
+      min-height: 50px;
       @include d-flex(row,flex-start,flex-start);
       gap: 4px;
+      @media (hover: hover){
+        &:hover{
+          text-decoration: underline;
+        }
+      }
       p{
         color: $dark10;
         font-size: 16px;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
       }
     }
     .cart-item-price-wrapper{

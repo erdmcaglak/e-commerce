@@ -22,5 +22,5 @@ export default defineNuxtConfig({
       title:'Artisan'
     }
   },
-  modules: ['nuxt-icon','nuxt-swiper']
+  modules: ['nuxt-icon', 'nuxt-swiper', "@nuxt/image"]
 })
