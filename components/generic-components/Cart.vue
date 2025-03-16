@@ -16,13 +16,14 @@
     row:{type:Boolean,default:false},
     options:{type:Object},
     stock:{type:[Number,String]},
-    hideEdit:{type:Boolean,default:false}
+    hideEdit:{type:Boolean,default:false},
+    class:{type:String,default:''}
   })
 </script>
 
 <template>
   <ClientOnly>
-    <NuxtLink :to="'/product/'+props.productId" :class="['cart-item-wrapper']">
+    <NuxtLink :to="'/product/'+props.productId" :class="['cart-item-wrapper',props.class]">
       <div v-if="Math.round((props.discount || 0)) > 0 && props.oldPrice && !props.small" class="cart-item-badge">
         %{{ Math.round(props.discount) }}
       </div>
@@ -41,7 +42,7 @@
         <div :class="['cart-item-title']" :style="props.small ? 'height:25px;-webkit-line-clamp:1;align-items:center' : ''">
           <p :class="props.small ? 'small-text' : ''">{{ props.title }}</p>
         </div>
-        <div class="cart-item-price-wrapper" :style="props.small ? 'min-height:40px' : ''">
+        <div :class="['cart-item-price-wrapper',props.small ? 'row-reverse' : 'column']" :style="props.small ? 'min-height:40px' : ''">
           <div v-if="props.oldPrice" :class="['old-price',props.small ? 'small-text' : '']">
             {{ priceFixer(props.oldPrice) }}
           </div>
@@ -65,6 +66,10 @@
   padding: 4px;
   gap: 8px;
   position: relative;
+  transition: all .2s ease;
+  &:hover{
+    @include box-shadow(0,2px,16px,-8px,rgba(0,0,0));
+  }
   .cart-item-badge{
     position: absolute;
     top: 0;
@@ -93,7 +98,12 @@
   .small-image{
     max-height: 150px;
     min-height: 150px;
-    height: 100px;
+    height: 150px;
+    @media screen and (max-width:768px) {
+      max-height: 100px;
+      min-height: 100px;
+      height: 100px;
+    }
   }
   .normal-image{
     max-height: 300px;
@@ -188,9 +198,19 @@
         overflow: hidden;
       }
     }
-    .cart-item-price-wrapper{
-      min-height: 50px;
+    .row-reverse{
+      @include d-flex(row-reverse,flex-end,center);
+      .price{
+        padding-bottom: 0!important;
+        padding-right: 8px;
+      }
+    }
+    .column{
       @include d-flex(column,flex-end,flex-start);
+    }
+    .cart-item-price-wrapper{
+      flex-wrap: wrap;
+      min-height: 50px;
       .old-price{
         font-size: 16px;
         font-weight: 400;

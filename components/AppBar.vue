@@ -39,15 +39,20 @@
         menu.classList.remove('slide-menu-btt');
       },150)
     }     
-  }   
-  
-  onMounted(async () => {
-    searchBoxCategories.value = await getRandomCategories(4);
+  }
+
+  const generateCategories = async (arr) =>{
+    searchBoxCategories.value = arr;
     for(let item of searchBoxCategories.value){
       let key = getProductCategory(item).categoryArr.filter(e=>e).join('||');
       let data = await getCategoryProducts(key.split('||').at(-1),8);
       searchBoxCatProds.value[key] = data;
     }
+  }
+  
+  onMounted(async () => {
+    const temp = await getRandomCategories(4);
+    generateCategories(temp);
     searchBoxCatProds.value['random'] = await getProducts(8);
     window.addEventListener('click',()=>{
       isOpenedSearch.value && (isOpenedSearch.value = false);
@@ -61,6 +66,8 @@
 
     _debounce.value = setTimeout(async ()=>{
       searchProds.value = await searchProd(newValue);
+      generateCategories(Array.from(new Set(searchProds.value.map(e=>e.category))));
+      searchBoxCatProds.value['search'] = searchProds.value;
     },300)
     
   });
@@ -71,13 +78,20 @@
       <NuxtLink class="logo-wrapper" to="/">
         <img src="/logo.png" alt="Artisan">
       </NuxtLink>
-      <div v-if="!props.modeCheckout" class="search-wrapper" @click.stop>
-        <Icon name="mdi:magnify" color="black" size="24"/>
-        <input @focus="openSearch" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+      <div class="search-area">
+        <div v-if="!props.modeCheckout" class="search-wrapper" @click.stop>
+          <Icon name="mdi:magnify" color="black" size="24"/>
+          <input @focus="openSearch" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+        </div>
         <transition name="fade"> 
-          <SearchBox v-if="isOpenedSearch" :categories="searchBoxCategories" :products="searchBoxCatProds"/>
+          <SearchBox v-if="isOpenedSearch" :categories="searchBoxCategories" :products="searchBoxCatProds" @close="isOpenedSearch=false">
+            <template v-slot:search-input>
+              <input ref="searchInp" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+            </template>
+          </SearchBox>
         </transition>
       </div>
+      
       <div class="app-bar-actions">
         <div v-if="!props.modeCheckout" :class="['hamburger-wrapper', isClickedHamMenu ? 'close' : '']" @click="toggleMenu">
           <span class="child-1"></span>
@@ -111,6 +125,19 @@
             {{basketItemCount}}
           </div>
         </NuxtLink>
+        <div class="icon-wrapper search" @click.stop>
+          <Button
+            @clickTrigger="openSearch"
+            icon="mdi:search"
+            fontSize="24px"
+            fontColor="#000"
+            text
+            hoveredBackground="transparent"
+            background="transparent"
+            hoveredColor="#000"
+            padding="0"
+          />
+        </div>
       </div>
     </div>
     <Menu v-if="!props.modeCheckout"/>
@@ -122,7 +149,7 @@
   width: 100%;
   position: sticky;
   top: 0;
-  z-index: 3;
+  z-index: 9999;
   @media screen and (max-width:768px){
     position: relative;
   }
@@ -153,28 +180,40 @@
         width:100%;
       }
     }
-    .search-wrapper{
+    .search-area{
       position: relative;
-      background-color: $white1;
       width: 35%;
-      gap: 6px;
-      height: fit-content;
-      transition: all .2s ease;
-      @include d-flex(row,flex-start,center);
-      border: 1px solid $gray5;
-      border-radius: 4px;
-      padding-left: 6px;
-      @media screen and (max-width:768px) {
-        width: 100%;
+      @media screen and (max-width:1024px) {
+        position: unset;
       }
-      input{
-        flex: 1 0 1px;
-        outline: none;
-        border: none;
-        font-size: 16px;
-        height: 100%;
-        padding: 10px 6px;
+      @media screen and (max-width:768px) {
+        position: unset;
+      }
+      .search-wrapper{
+        background-color: $white1;
+        gap: 6px;
+        height: fit-content;
+        transition: all .2s ease;
+        @include d-flex(row,flex-start,center);
+        border: 1px solid $gray5;
         border-radius: 4px;
+        padding-left: 6px;
+        @media screen and (max-width:768px) {
+          width: 100%;
+          display: none;
+        }
+        input{
+          flex: 1 0 1px;
+          outline: none;
+          border: none;
+          font-size: 16px;
+          height: 100%;
+          padding: 10px 6px;
+          border-radius: 4px;
+          @media screen and (max-width:768px) {
+            display: none;
+          }
+        }
       }
     }
     .app-bar-actions{
@@ -210,6 +249,12 @@
           @include d-flex-center;
           line-height: 1;
           padding-bottom: 1px;
+        }
+      }
+      .search{
+        display: none;
+        @media screen and (max-width:768px) {
+          display: block;
         }
       }
       .hamburger-wrapper{

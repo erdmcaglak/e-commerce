@@ -65,7 +65,7 @@
       padding: 10px;
       cursor: pointer;
       transition: all .2s ease;
-      z-index: 9999;
+      z-index: 9;
       @media (hover: hover){
         &:hover{
           background-color: $warning_blue;

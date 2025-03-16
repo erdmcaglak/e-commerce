@@ -3,6 +3,7 @@
   const props = defineProps({
     src:{type:String,required:true},
     alt:{type:String,required:true},
+    class:{type:String,default:''}
   })
 </script>
 
@@ -22,6 +23,7 @@
         v-bind="imgAttrs"
         :src="src"
         :loading="loading"
+        :class="props.class"
       >
       <LoadingSkeleton v-else />
     </NuxtImg>

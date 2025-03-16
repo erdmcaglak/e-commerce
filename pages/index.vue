@@ -17,7 +17,9 @@
 <template>
   <div class="home-page">
     <NuxtLink to="/category/sale" class="hp-banner">
-      <ImageLoader src="/sales.jpg" alt=""/>
+      <div class="img-1">
+        <ImageLoader class="img" src="/sales.jpg" alt=""/>
+      </div>
     </NuxtLink>
     <Slider
       sliderTitle="Recomended For You"
@@ -25,7 +27,7 @@
     />
     <NuxtLink to="/category/clothes" class="hp-banner">
       <div class="img-2">
-        <ImageLoader src="/banner_2.png" alt=""/>
+        <ImageLoader class="img" src="/banner_2.png" alt=""/>
       </div>
       
     </NuxtLink>
@@ -65,6 +67,7 @@
         width: 100%;
       }
       @media screen and (max-width:768px) {
+        width: unset;
         position: absolute;
         right: -350px;
         top: 0;
@@ -79,6 +82,11 @@
         position: absolute;
         left: -130px;
         top: 0;
+      }
+    }
+    .img{
+      @media screen and (max-width:768px) {
+        width: unset!important;
       }
     }
   }

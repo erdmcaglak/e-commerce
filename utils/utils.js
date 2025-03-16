@@ -241,7 +241,14 @@ export const getRandomCategories = async (count=4) =>{
 }
 
 export const searchProd = async (sQuery)=>{
-  const res = await axiosHolder.get(`/products/search?q=${sQuery}&limit=8`);
+  try{
+    const res = await axiosHolder.get(`/products/search?q=${sQuery}&limit=8`);
 
-  return res.data
+    return res.data.products;
+  }catch(err){
+    console.error(err);
+    return [];
+  }
+  
+  
 }
