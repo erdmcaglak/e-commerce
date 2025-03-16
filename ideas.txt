@@ -1,7 +1,5 @@
 //TODO Tüm sayfalar küçük componentlere bölünecek
-//TODO SearchBox yapılacak
 //TODO her sayfa için loading template oluşturulacak
-//TODO kategori sayfasında ürün olmazsa 'no data found' yazısı eklenecek
 //TODO herhangi bir sayfada filtre uygulandığında path'e query olarak eklenecek ve query'e göre de filtre uygulanabilecek
 //TODO filtrelerde arama yapılabilinecek
 //TODO pdp sayfasına yorumlar eklenecek
@@ -13,3 +11,4 @@
 //TODO sepet sayfasında freeShipping için fiyat limiti koyulacak
 //TODO statik veriler enum içerisine taşınacak
 //TODO dummyjson'a yeni ürünler eklenmiş, bunlara göre tekrar düzenleme yap
+//TODO resimlerin boyutu çok yüksek, bunu cache ile küçük boyut olarak tut ordan kullan
