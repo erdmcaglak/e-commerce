@@ -1,4 +1,5 @@
 import axios from "axios";
+import cacher from '@/utils/cacher'
 
 const baseURL = 'https://dummyjson.com';
 const config = {
@@ -8,7 +9,8 @@ const config = {
 const _axios = axios.create(config);
 
 class AxiosWrapper {
-  get(url, config) {
+  async get(url, config) {
+    //console.log({aa:await cacher.get('images','aaa')})
     return _axios.get(url, config);
   }
   delete(url, config) {
