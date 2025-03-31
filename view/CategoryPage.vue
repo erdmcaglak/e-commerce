@@ -182,7 +182,6 @@
               <template v-for="(item,i) in filteredCategoryProducts" :key="'categoryProds'+i + item.id">
                 <Cart
                   :image="getImage(item)"
-                  :secondImage="item.images[1] || ''"
                   :brand="item.brand || ''"
                   :title="item.title"
                   :price="item.price"

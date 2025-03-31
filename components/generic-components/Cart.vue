@@ -4,7 +4,6 @@
   const props = defineProps({
     small:{type:Boolean,default:false},
     image:{type:String,required:true},
-    secondImage:{type:String,default:''},
     title:{type:String,required:true},
     src:{type:String,default:'#'},
     price:{type:[Number,String],required:true},
@@ -31,9 +30,9 @@
         <div class="first-image-wrapper">
           <ImageLoader :src="props.image" :alt="props.title"/>
         </div>
-        <div v-if="props.secondImage" class="second-image-wrapper">
+        <!-- <div v-if="props.secondImage" class="second-image-wrapper">
           <ImageLoader :src="props.secondImage" :alt="props.title"/>
-        </div>
+        </div> -->
       </div>
       <div :class="['cart-info-wrapper',props.small ? 'px4' : 'px8']" :style="props.small ? 'gap:2px' : ''">
         <div v-if="!props.small" class="cart-item-brand">

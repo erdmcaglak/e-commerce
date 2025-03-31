@@ -67,7 +67,6 @@
           <SwiperSlide v-for="(item,i) in props.sliderList" :key="'specialSlider'+i + item.id">
             <Cart
               :image="item.images[0]"
-              :secondImage="item.images[1] || ''"
               :brand="item.brand || ''"
               :title="item.title"
               :price="item.price"

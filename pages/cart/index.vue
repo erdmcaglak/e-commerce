@@ -58,7 +58,6 @@
             :stock="basketItem.item.stock"
             :options="basketItem.options"
             :image="basketItem.item.images[0]"
-            :secondImage="basketItem.item.images[1] || ''"
             :brand="basketItem.item.brand || ''"
             :title="basketItem.item.title"
             :price="basketItem.item.price"

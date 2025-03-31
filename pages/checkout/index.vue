@@ -164,7 +164,6 @@
         row
         hideEdit
         :image="getImage(item.item)"
-        :secondImage="item.item.images[1] || ''"
         :brand="item.item.brand || ''"
         :title="item.item.title"
         :price="item.item.price"
