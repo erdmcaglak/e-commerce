@@ -30,7 +30,7 @@ function setVersion(version){
         const _versionJs = path.resolve(versionPath,'./version.js');
         if (!fs.existsSync(_versionJs)){
             fs.mkdirSync(versionPath, { recursive: true });
-            fs.writeFileSync(_versionJs,'version= Erdem is Best :)');
+            fs.writeFileSync(_versionJs,'export const version= "Erdem is Best :)"');
         }
 
         const content = fs?.readFileSync(_versionJs, 'utf-8');
