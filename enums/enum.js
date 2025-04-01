@@ -63,8 +63,8 @@ export const sortByItems = [
   {title:'Popularity',value:'popularity',sortKey:'rating',type:'desc'},
   {title:'Price Low to High',value:'price-low-to-high',sortKey:'price',type:'asc'},
   {title:'Price High to Low',value:'price-high-to-low',sortKey:'price',type:'desc'},
-  {title:'Name A-Z',value:'name-a-z',sortKey:'title',type:'asc'},
-  {title:'Name Z-A',value:'name-z-a',sortKey:'title',type:'desc'},
+  {title:'Name A-Z',value:'name-a-z',sortKey:'title',type:'desc'},
+  {title:'Name Z-A',value:'name-z-a',sortKey:'title',type:'asc'},
 ]
 
 export const colors = [

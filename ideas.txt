@@ -12,3 +12,4 @@
 //TODO statik veriler enum içerisine taşınacak
 //TODO dummyjson'a yeni ürünler eklenmiş, bunlara göre tekrar düzenleme yap
 //TODO resimlerin boyutu çok yüksek, bunu cache ile küçük boyut olarak tut ordan kullan
+//TODO settings yap ve buraya ürünleri çoklama gibi özellikler ekle

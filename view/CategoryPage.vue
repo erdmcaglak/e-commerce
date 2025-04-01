@@ -24,15 +24,15 @@
     filteredCategoryProducts.value.sort((a,b)=>{
       if(type === 'asc'){
         if(typeof a[key] === 'string'){
-          return a[key].localeCompare(b[key]);
+          return b[key].localeCompare(a[key]);
         }
-        return a[key]-b[key]
+        return a[key] - b[key]
       }
       else{
         if(typeof a[key] === 'string'){
-          return b[key].localeCompare(a[key]);
+          return a[key].localeCompare(b[key]);
         }
-        return b[key]-a[key]
+        return b[key]- a[key]
       }
     })
   }
@@ -108,6 +108,8 @@
     if(grouppedArr.length === 0){
       setDefaultProducts();
     }
+
+    sortAllProducts();
   }
 
   const addFilter = (filter,item,i) =>{
@@ -391,6 +393,7 @@
           }
         }
         .category-products-content{
+          min-height: 250px;
           position: relative;
           padding: 10px;
           width: 100%;

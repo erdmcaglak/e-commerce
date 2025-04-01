@@ -18,7 +18,7 @@
   <div class="home-page">
     <NuxtLink to="/category/sale" class="hp-banner">
       <div class="img-1">
-        <ImageLoader class="img" src="/sales.jpg" alt=""/>
+        <ImageLoader class="img" src="/sales.jpg" alt="" :skeletonClass="'min-250'"/>
       </div>
     </NuxtLink>
     <Slider
@@ -27,7 +27,7 @@
     />
     <NuxtLink to="/category/clothes" class="hp-banner">
       <div class="img-2">
-        <ImageLoader class="img" src="/banner_2.png" alt=""/>
+        <ImageLoader class="img" src="/banner_2.png" alt="" :skeletonClass="'min-250'"/>
       </div>
       
     </NuxtLink>
@@ -60,6 +60,7 @@
     @media screen and (max-width:768px) {
       min-height: 500px;
       max-height: 500px;
+      height: 500px;
     }
     .img-1{
       height: 100%;
@@ -82,6 +83,14 @@
         position: absolute;
         left: -130px;
         top: 0;
+      }
+    }
+    .min-250{
+      height: 500px;
+      @media screen and (max-width:768px) {
+        min-height: 500px;
+        height:500px;
+        max-height: 500px;
       }
     }
     .img{

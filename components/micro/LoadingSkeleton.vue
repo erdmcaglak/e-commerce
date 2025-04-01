@@ -1,9 +1,12 @@
 <script setup>
   import {ref} from 'vue';
+  const props = defineProps({
+    class:{type:String,default:''},
+  })
 </script>
 
 <template>
-  <div class="skeleton"></div>
+  <div :class="['skeleton',props.class]"></div>
 </template>
 
 <style lang="scss">

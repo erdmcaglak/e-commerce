@@ -3,7 +3,8 @@
   const props = defineProps({
     src:{type:String,required:true},
     alt:{type:String,required:true},
-    class:{type:String,default:''}
+    class:{type:String,default:''},
+    skeletonClass:{type:String,default:''},
   })
 </script>
 
@@ -25,7 +26,7 @@
         :loading="loading"
         :class="props.class"
       >
-      <LoadingSkeleton v-else />
+      <LoadingSkeleton :class="props.skeletonClass" v-else />
     </NuxtImg>
   </div>
   

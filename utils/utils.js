@@ -54,9 +54,9 @@ const _setOldPrice = (prods) =>{
   for(let i=0;i<prods.length;i++){
     prods[i].randomImageIndex = Math.floor(Math.random() * (prods[i].images?.length || 1));
     if(Math.round((prods[i].discountPercentage || 0)) > 0){
-      prods[i].oldPrice = (prods[i].price * (1+(Math.round(prods[i].discountPercentage)/100))).toFixed(2);
+      prods[i].oldPrice = parseFloat((prods[i].price * (1+(Math.round(prods[i].discountPercentage)/100))).toFixed(2));
     } 
-    prods[i].price = prods[i].price.toFixed(2)
+    prods[i].price = parseFloat(prods[i].price.toFixed(2))
   }
   
   return prods
@@ -123,7 +123,7 @@ export const getProductDetail = async (productId) =>{
   try{
     const prodDetail = await axiosHolder.get(`/products/${productId}`);
 
-    return _setOldPrice([prodDetail?.data]) || {}
+    return _setOldPrice([prodDetail?.data])[0] || {}
   }catch(e){
     console.error(e);
     return {};
