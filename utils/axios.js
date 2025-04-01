@@ -1,4 +1,5 @@
 import axios from "axios";
+import cacher from '@/utils/cacher'
 
 const baseURL = 'https://dummyjson.com';
 const config = {
@@ -8,8 +9,28 @@ const config = {
 const _axios = axios.create(config);
 
 class AxiosWrapper {
-  get(url, config) {
-    return _axios.get(url, config);
+  async get(url, config) {
+    if(url.includes('/products')){
+      return new Promise(async(resolve,reject)=>{
+        try{
+          let cached = await cacher.get(url)
+          if(cached){
+            resolve({data:cached});
+          }
+          else{
+            const res = await _axios.get(url, config);
+            await cacher.add(url,res.data);
+            resolve(res);
+          }
+          
+        }catch(err){
+          reject(err);
+        }
+      })
+    }
+    else{
+      return _axios.get(url, config);
+    }
   }
   delete(url, config) {
     return _axios.delete(url, config);
