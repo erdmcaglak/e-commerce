@@ -1,109 +1,154 @@
 import { version } from '@/generated/version';
 
 const DB_NAME = 'cache'
+const TABLE_NAME = 'cache-data'
 
 class Cacher {
   #cacheDatas={}
 
-  // async #checkCache(){
-  //   if(Object.keys(this.#cacheDatas).length > 0) return;
-  //   if(process.client){
-  //     this.#initConstructor();
-  //   }
-  // }
+  constructor(){
+    this.#initConstructor();
+  }
 
-  // async #initConstructor(){
-  //   if(version !== window?.localStorage?.getItem('version')){
-  //     await this.clearCache(true);
-  //     window?.localStorage?.setItem('version',version);
-  //   }
-
-  //   await this.#updateCacheDatas();
-  // }
-
-  // async #updateCacheDatas(){
-  //   if(process.client){
-  //     const db = await this.#connectToDatabase();
-    
-  //     this.#cacheDatas = await this.#getAllDatas(db);
-
-  //     console.log({tempppp:this.#cacheDatas})
-  //   }
-  // }
-
-  #connectToDatabase(tableName) {
+  async #initConstructor(){
     if(process.client){
-    return new Promise((resolve, reject) => {
-      const request = window.indexedDB.open(DB_NAME);
-      request.onupgradeneeded = event => {
-        const db = event.target.result;
-        if (tableName && !db.objectStoreNames.contains(tableName)) {
-          db.createObjectStore(tableName, { keyPath: 'key' });
-        }
-      };
-
-      request.onsuccess = async event => {
-        const db = event.target.result;
-        resolve(db);
-      };
-
-      request.onerror = event => {
-        reject(`Database error: ${event.target.error}`);
-      };
-    });
+      if(version !== window?.localStorage?.getItem('version')){
+        window?.localStorage?.setItem('version',version);
+        this.#clearAll();
+      }
+      this.#updateCacheDatas();
     }
   }
 
-  // #getAllDatas(db) {
-  //   return new Promise((resolve, reject) => {
-  //     const promiseHolder = [];
+  async #clearAll(){
+    return new Promise(async (resolve,reject)=>{
+      const db = await this.#connectToDatabase();
+      const transaction = db.transaction(TABLE_NAME, 'readwrite');
+      const objectStore = transaction.objectStore(TABLE_NAME);
+      const request = objectStore.clear();
 
-  //     for(let tbKey in db.objectStoreNames){
-  //       promiseHolder.push(new Promise((resolve,reject)=>{
-  //         let tb = db.objectStoreNames[tbKey];
-  //         const transaction = db.transaction(tb, 'readonly');
-  //         const store = transaction.objectStore(tb);
+      request.onsuccess = event => {
+        this.#updateCacheDatas();
+        resolve('Table data cleared successfully.');
+      };
 
-  //         const request = store.getAll();
+      request.onerror = event => {
+        reject(`Error clearing table data: ${event.target.error}`);
+      };
+    })
+  }
 
-  //         request.onsuccess = event => {
-  //           const data = event.target.result;
-  //           const tempObject = {}
-
-  //           for (let item of data) {
-  //             tempObject[item.key] = item.value;
-  //           }
-
-  //           resolve({[tbKey]:tempObject});
-  //         };
-
-  //         request.onerror = event => {
-  //           reject({[tbKey]:{}});
-  //         };
-  //       }))
-  //     }
-
-  //     Promise.all(promiseHolder).then(values=>{
-  //       const res = {};
-
-  //       for(let key in values){
-  //         res[key] = values[key].value
-  //       }
+  async #getAllTables(db){
+    if(process.client){
+      return new Promise((resolve, reject) => {
+        const promiseHolder = [];
         
-  //       resolve(res);
-  //     }).catch(err=>{
-  //       reject(err);
-  //     })
-  //   });
-  // }
+        for(let tbKey in Array.from(db.objectStoreNames)){
+          promiseHolder.push(new Promise((resolve,reject)=>{
+            let tb = db.objectStoreNames[tbKey];
+            const transaction = db.transaction(tb, 'readonly');
+            const store = transaction.objectStore(tb);
+  
+            const request = store.getAll();
+  
+            request.onsuccess = event => {
+              const data = event.target.result;
+              const tempObject = {}
+  
+              for (let item of data) {
+                tempObject[item.key] = item.value;
+              }
+  
+              resolve({[tb]:tempObject});
+            };
+  
+            request.onerror = event => {
+              reject({[tbKey]:{}});
+            };
+          }))
+        }
+  
+        Promise.all(promiseHolder).then(values=>{
+          let res = {};
+  
+          for(let item of values){
+            for(let key in item){
+              res = Object.assign(res,item[key]);
+            }
+          }
+          
+          resolve(res);
+        }).catch(err=>{
+          reject(err);
+        })
+      });
+    }
+  }
 
-  get(tableName,key){
+  async #updateCacheDatas(){
+    if(process.client){
+      const db = await this.#connectToDatabase();
+    
+      this.#cacheDatas = await this.#getAllTables(db);
+    }
+  }
+
+  #connectToDatabase() {
+    if(process.client){
+      return new Promise((resolve, reject) => {
+        const request = window.indexedDB.open(DB_NAME);
+        request.onupgradeneeded = event => {
+          const db = event.target.result;
+          if (TABLE_NAME && !db.objectStoreNames.contains(TABLE_NAME)) {
+            db.createObjectStore(TABLE_NAME, { keyPath: 'key' });
+            this.#updateCacheDatas();
+          }
+        };
+
+        request.onsuccess = async event => {
+          const db = event.target.result;
+          resolve(db);
+        };
+
+        request.onerror = event => {
+          reject(`Database error: ${event.target.error}`);
+        };
+      });
+    }
+  }
+
+  add(key,value){
     if(process.client){
       return new Promise(async (resolve,reject)=>{
-        const db = await this.#connectToDatabase(tableName);
-        const transaction = db.transaction(tableName, 'readwrite');
-        const store = transaction.objectStore(tableName);
+        const db = await this.#connectToDatabase(TABLE_NAME);
+        const transaction = db.transaction(TABLE_NAME, 'readwrite');
+        const store = transaction.objectStore(TABLE_NAME);
+
+        const request = store.put({
+          key,
+          value:value
+        });
+
+        request.onsuccess = event => {
+          const data = event.target.result;
+          this.#updateCacheDatas();
+          resolve(data?.value);
+        };
   
+        request.onerror = event => {
+          reject(`Error getting data from database: ${event.target.error}`);
+        };
+      })
+    }
+  }
+
+  get(key){
+    if(process.client){
+      return new Promise(async (resolve,reject)=>{
+        const db = await this.#connectToDatabase(TABLE_NAME);
+        const transaction = db.transaction(TABLE_NAME, 'readwrite');
+        const store = transaction.objectStore(TABLE_NAME);
+
         const request = store.get(key);
   
         request.onsuccess = event => {

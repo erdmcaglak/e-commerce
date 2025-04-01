@@ -10,8 +10,27 @@ const _axios = axios.create(config);
 
 class AxiosWrapper {
   async get(url, config) {
-    //console.log({aa:await cacher.get('images','aaa')})
-    return _axios.get(url, config);
+    if(url.includes('/products')){
+      return new Promise(async(resolve,reject)=>{
+        try{
+          let cached = await cacher.get(url)
+          if(cached){
+            resolve({data:cached});
+          }
+          else{
+            const res = await _axios.get(url, config);
+            await cacher.add(url,res.data);
+            resolve(res);
+          }
+          
+        }catch(err){
+          reject(err);
+        }
+      })
+    }
+    else{
+      return _axios.get(url, config);
+    }
   }
   delete(url, config) {
     return _axios.delete(url, config);

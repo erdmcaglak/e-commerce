@@ -120,19 +120,19 @@
     @include d-flex-center;
     position: relative;
     overflow: hidden;
-    @media (hover: hover){
-      &:hover{
-        .second-image-wrapper{
-          z-index: 1;
-          width: 100%;
-          height: 100%;
-        }
-        .first-image-wrapper{
-          width: 99%;
-          height: 99%;
-        }
-      }
-    }
+    // @media (hover: hover){
+    //   &:hover{
+    //     .second-image-wrapper{
+    //       z-index: 1;
+    //       width: 100%;
+    //       height: 100%;
+    //     }
+    //     .first-image-wrapper{
+    //       width: 99%;
+    //       height: 99%;
+    //     }
+    //   }
+    // }
     .first-image-wrapper{
       width: 100%;
       height: 100%;
