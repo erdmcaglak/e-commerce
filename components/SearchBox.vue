@@ -13,13 +13,23 @@
   const searchInp = ref(null);
   const emit = defineEmits(['close']);
 
-  for(let cat of props.categories){
-    categories.value.push({
-      title:getProductCategory(cat,true).categoryArr.filter(e=>e).at(-1),
-      route:getProductCategory(cat).categoryArr.join('/'),
-      category: getProductCategory(cat).categoryArr.filter(e=>e).join('||'),
-    })
+  const fillCategories = () =>{
+    activeCat.value = '';
+    const arr = [];
+    for(let cat of props.categories){
+      arr.push({
+        title:getProductCategory(cat,true).categoryArr.filter(e=>e).at(-1),
+        route:getProductCategory(cat).categoryArr.join('/'),
+        category: getProductCategory(cat).categoryArr.filter(e=>e).join('||'),
+      })
+    }
+
+    categories.value = arr;
   }
+
+  onMounted(() => {
+    fillCategories();
+  });
 
   const getItem = () =>{
     let key = Object.keys(props.products)[0];
@@ -30,6 +40,14 @@
     router.push('/category'+category.route);
     emit('close');
   }
+
+
+  watch(()=>props.categories, (newValue, oldValue) => {
+    fillCategories();
+  },{
+    immediate:true,
+    deep:true
+  });
 
 </script>
 <template>
@@ -45,7 +63,8 @@
     </div>
     <div class="search-box-categories">
       <div class="category-header">
-        Categories
+        <span>Categories</span>
+        <Icon v-if="activeCat" @click="activeCat = ''" style="cursor:pointer" name="mdi:undo-variant" color="black" size="18"/>
       </div>
       <Divider/>
       <div :class="['category-item',activeCat===category.category ? 'active' : '']" v-for="(category,i) in categories" :key="'category'+i" @mouseenter="activeCat=category.category" @click="goToRoute(category)">
@@ -151,6 +170,7 @@
       border-right: unset;
     }
     .category-header{
+      @include d-flex(row,space-between,center);
       padding: 4px 4px 0px;
       font-weight: 600;
       color: $dark6;

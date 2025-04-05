@@ -41,19 +41,38 @@
     }     
   }
 
-  const generateCategories = async (arr) =>{
+  const getControlledProds = (category,limit,arr) =>{
+    return new Promise(async (resolve,reject)=>{
+      if(!arr){
+        let temp = await getCategoryProducts(category,limit);
+        resolve(temp);
+      }
+      else{
+        let temp = arr.filter(e=>e.category == category).slice(0,limit);
+        console.log({temp,arr})
+        resolve(temp);
+      }
+    })
+  }
+
+  const generateCategories = async (arr,prods) =>{
     searchBoxCategories.value = arr;
+    searchBoxCatProds.value = {};
     for(let item of searchBoxCategories.value){
       let key = getProductCategory(item).categoryArr.filter(e=>e).join('||');
-      let data = await getCategoryProducts(key.split('||').at(-1),8);
+      let data = await getControlledProds(key.split('||').at(-1),8,prods);
       searchBoxCatProds.value[key] = data;
     }
   }
-  
-  onMounted(async () => {
+
+  const generateRandom =async () =>{
     const temp = await getRandomCategories(4);
     generateCategories(temp);
     searchBoxCatProds.value['random'] = await getProducts(8);
+  }
+  
+  onMounted(async () => {
+    generateRandom();
     window.addEventListener('click',()=>{
       isOpenedSearch.value && (isOpenedSearch.value = false);
     })
@@ -64,10 +83,15 @@
       clearTimeout(_debounce.value);
     }
 
+    if(!newValue){
+      generateRandom();
+      return;
+    }
+
     _debounce.value = setTimeout(async ()=>{
       searchProds.value = await searchProd(newValue);
-      generateCategories(Array.from(new Set(searchProds.value.map(e=>e.category))));
-      searchBoxCatProds.value['search'] = searchProds.value;
+      generateCategories(Array.from(new Set(searchProds.value.map(e=>e.category))),searchProds.value);
+      searchBoxCatProds.value['random'] = searchProds.value.slice(0,8);
     },300)
     
   });
