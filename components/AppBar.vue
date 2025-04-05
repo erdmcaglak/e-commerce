@@ -16,6 +16,8 @@
 
   const _debounce = ref();
 
+  const router = useRouter();
+
   const openSearch = () =>{
     isOpenedSearch.value = true;
   }
@@ -49,10 +51,15 @@
       }
       else{
         let temp = arr.filter(e=>e.category == category).slice(0,limit);
-        console.log({temp,arr})
         resolve(temp);
       }
     })
+  }
+
+  const goToSearchPage = (e) =>{
+    if(search.value){
+      router.push('/search?q='+search.value);
+    }
   }
 
   const generateCategories = async (arr,prods) =>{
@@ -105,12 +112,12 @@
       <div class="search-area">
         <div v-if="!props.modeCheckout" class="search-wrapper" @click.stop>
           <Icon name="mdi:magnify" color="black" size="24"/>
-          <input @focus="openSearch" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+          <input @focus="openSearch" @keypress.enter="goToSearchPage" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
         </div>
         <transition name="fade"> 
           <SearchBox v-if="isOpenedSearch" :categories="searchBoxCategories" :products="searchBoxCatProds" @close="isOpenedSearch=false">
             <template v-slot:search-input>
-              <input ref="searchInp" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+              <input ref="searchInp" @keypress.enter="goToSearchPage" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
             </template>
           </SearchBox>
         </transition>

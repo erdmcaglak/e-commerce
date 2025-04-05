@@ -4,6 +4,14 @@
   import {sortByItems} from '@/enums/enum'
   import {ref} from 'vue'
 
+  // const props = defineProps({
+  //   searchProducts:{type:Array,default:()=>[]},
+  // })
+
+
+  //TODO searchProducts'a göre search sayfası veya category sayfası açılacak.
+
+
   const route = useRoute()
   const {mainCategory,category,childCategory} = route.params;
   const breadCrumbArr = [mainCategory,category,childCategory].filter(e=>e);
@@ -19,6 +27,7 @@
     {title:'Brand',value:'brand',children:getBrandFilterItems(categoryProducts,'brand')},
     {title:'Price',value:'price',children:getPriceFilterItems(categoryProducts,5)},
   ])
+
 
   const productsSort = (key,type) =>{
     filteredCategoryProducts.value.sort((a,b)=>{
