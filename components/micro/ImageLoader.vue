@@ -11,6 +11,7 @@
 <template>
   <div class="loading-image-wrapper">
     <NuxtImg
+      :key="props.src"
       :src="props.src"
       :alt="props.alt"
       fit="contain"

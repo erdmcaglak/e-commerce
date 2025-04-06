@@ -2,31 +2,73 @@
   import {kebabToCapitalize,getCategoryProducts} from '@/utils/utils'
   import {getBrandFilterItems,getPriceFilterItems} from '@/utils/functions'
   import {sortByItems} from '@/enums/enum'
-  import {ref} from 'vue'
+  import {ref,computed} from 'vue'
 
-  // const props = defineProps({
-  //   searchProducts:{type:Array,default:()=>[]},
-  // })
+  const props = defineProps({
+    products:{type:Array,default:()=>[]},
+    title:{type:String,default:''},
+    hideBreadcrump:{type:Boolean,default:false},
+  })
 
 
   //TODO searchProducts'a göre search sayfası veya category sayfası açılacak.
-
 
   const route = useRoute()
   const {mainCategory,category,childCategory} = route.params;
   const breadCrumbArr = [mainCategory,category,childCategory].filter(e=>e);
   const _category = ['mens','womens'].includes(category) && childCategory ? category + '-' + childCategory : breadCrumbArr.at(-1)
-
-  const categoryProducts = await getCategoryProducts(_category)
+  const multiplyItems = ref([1,2,3,4]);
+  const activeMultiplyItem = ref(1);
+  const isSettingsOpen = ref(false);
+  const perPage = ref(12);
+  const page = ref(1);
+  const categoryProducts = ref([]);
+  const filteredCategoryProducts = ref([])
+  const productHolder = ref([])
   const selectedSortItem = ref('');
-  const filteredCategoryProducts = ref([...categoryProducts || []])
-  const productHolder = ref([...categoryProducts || []])
   const activeFiltersList = ref([])
   const includedFilters = ref([]);
   const filtersArray = ref([
-    {title:'Brand',value:'brand',children:getBrandFilterItems(categoryProducts,'brand')},
-    {title:'Price',value:'price',children:getPriceFilterItems(categoryProducts,5)},
+    // {title:'Brand',value:'brand',children:getBrandFilterItems(categoryProducts,'brand')},
+    // {title:'Price',value:'price',children:getPriceFilterItems(categoryProducts,5)},
   ])
+  const isProdctsFetched = ref(false);
+
+
+  const changeActiveMultiply = (item) =>{
+    activeMultiplyItem.value = item;
+    window.localStorage.setItem('multiplyBy',JSON.stringify(item));
+  }
+
+  const generateProducts = async () =>{
+    isProdctsFetched.value = false;
+    categoryProducts.value = await getCategoryProducts(_category);
+    filteredCategoryProducts.value = [...categoryProducts.value];
+    productHolder.value = [...categoryProducts.value];
+    isProdctsFetched.value = true;
+  }
+
+  onMounted(async () => {
+    if(window.localStorage.getItem('multiplyBy')){
+      activeMultiplyItem.value = JSON.parse(window.localStorage.getItem('multiplyBy'));
+    }
+    else{
+      window.localStorage.setItem('multiplyBy',JSON.stringify(1));
+    }
+
+    generateProducts();
+  })
+
+  const getCurrentPageProdLastIndex = computed(() => {
+    return filteredCategoryProducts.value.length === 0 ? perPage.value : filteredCategoryProducts.value.length < ((page.value+1) * perPage.value) ? ((filteredCategoryProducts.value.length % perPage.value)) : perPage.value
+  })
+
+  const getTotalPage = computed(() => {
+    return Math.ceil(filteredCategoryProducts.value.length/perPage.value)
+  })
+
+  
+  
 
 
   const productsSort = (key,type) =>{
@@ -141,15 +183,39 @@
 <template>
   <div class="category-container container-main">
       <Breadcrumb
+        v-if="!hideBreadcrump"
         :categoryArr="breadCrumbArr"
       />
-      <h1 class="category-name">
-        {{ kebabToCapitalize(breadCrumbArr.at(-1)) }}
-      </h1>
+      <div class="view-header">
+        <h1 class="category-name">
+          {{ props.title || kebabToCapitalize(breadCrumbArr.at(-1)) }}
+        </h1>
+        <!-- <div class="view-settings">
+          <div class="settings-icon" @click="isSettingsOpen = !isSettingsOpen">
+            <Icon name="mdi:settings" size="24" color="#000000"/>
+          </div>
+          <div v-if="isSettingsOpen" class="settings-box">
+            <div class="box-haeder">
+              Multiply the products by
+            </div>
+            <div class="settings-items">
+              <div 
+                v-for="(item,i) in multiplyItems" 
+                :key="'multiplyBy'+i" 
+                :class="['settings-item', activeMultiplyItem === item ? 'active-settings-item' : '']"
+                @click="changeActiveMultiply(item)"
+              >
+              {{item}}
+              </div>
+            </div>
+          </div>
+        </div> -->
+      </div>
+      
       <div class="category-products-wrapper">
         <div class="filter-wrapper">
           <div class="sticky-filter">
-            <p class="filter-header">
+            <!-- <p class="filter-header">
               Filter By
             </p>
             <div class="filters">
@@ -170,14 +236,14 @@
                   </template>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="category-products">
-          <div class="category-products-sort p10">
-              <select name="sortBy" v-model="selectedSortItem" @change="sortAllProducts" class="sort-select-box">
-                <option selected value="">Sort By</option>
-                <option v-for="(sortItem,i) in sortByItems" :key="'sortItems'+i" :value="sortItem.value">{{ sortItem.title }}</option>
+          <!-- <div class="category-products-sort p10">
+            <select name="sortBy" v-model="selectedSortItem" @change="sortAllProducts" class="sort-select-box">
+              <option selected value="">Sort By</option>
+              <option v-for="(sortItem,i) in sortByItems" :key="'sortItems'+i" :value="sortItem.value">{{ sortItem.title }}</option>
             </select>
             <div class="category-items-info">
               <div class="total-count">
@@ -187,26 +253,35 @@
                 View <span>{{ filteredCategoryProducts.length }}</span> per page
               </div>
             </div>
+          </div> -->
+          <div class="pagination">
+            <LoadingSkeleton v-if="!getTotalPage" style="height:40px;width:35%"/>
+            <CustomPagination v-else v-model:page="page" :totalPages="getTotalPage"/>
           </div>
           <div class="category-products-content">
-            <template v-if="filteredCategoryProducts.length > 0">
-              <template v-for="(item,i) in filteredCategoryProducts" :key="'categoryProds'+i + item.id">
-                <Cart
-                  :image="getImage(item)"
-                  :brand="item.brand || ''"
-                  :title="item.title"
-                  :price="item.price"
-                  :oldPrice="item.oldPrice || 0"
-                  :discount="item.discountPercentage || 1"
-                  :productId="item.id.toString()"
-                />
-              </template>
-            </template>
-            <template v-else>
+            <template v-if="isProdctsFetched && filteredCategoryProducts.length === 0">
               <div class="no-data-found">
                 There are no products available.
               </div>
             </template>
+            <template v-else>
+              <template v-for="i in getCurrentPageProdLastIndex" :key="i">
+                <SkeletonCart v-if="!filteredCategoryProducts[(i + ((page-1)*perPage))-1]"/>
+                <Cart
+                  v-else
+                  :image="getImage(filteredCategoryProducts[(i + ((page-1)*perPage))-1])"
+                  :brand="filteredCategoryProducts[(i + ((page-1)*perPage))-1].brand || ''"
+                  :title="filteredCategoryProducts[(i + ((page-1)*perPage))-1].title"
+                  :price="filteredCategoryProducts[(i + ((page-1)*perPage))-1].price"
+                  :oldPrice="filteredCategoryProducts[(i + ((page-1)*perPage))-1].oldPrice || 0"
+                  :discount="filteredCategoryProducts[(i + ((page-1)*perPage))-1].discountPercentage || 1"
+                  :productId="filteredCategoryProducts[(i + ((page-1)*perPage))-1].id.toString()"
+                />
+              </template>
+            </template>
+          </div>
+          <div class="pagination">
+            <CustomPagination v-model:page="page" :totalPages="getTotalPage"/>
           </div>
         </div>
       </div>
@@ -216,12 +291,76 @@
 <style lang="scss">
 .category-container{
     @include d-flex(column,flex-start,stretch);
-    .category-name{
-      border-top: 1px solid $dark5;
-      border-bottom: 1px solid $dark5;
-      text-align: left;
-      padding: 10px 0;
-      margin: 10px 0;
+    .view-header{
+      @include d-flex(row,space-between,center);
+       border-top: 1px solid $dark5;
+        border-bottom: 1px solid $dark5;
+      .category-name{
+        text-align: left;
+        padding: 10px 0;
+        margin: 10px 0;
+      }
+      .view-settings{
+        @include d-flex-center;
+        position: relative;
+        .settings-icon{
+          cursor: pointer;
+          @include d-flex-center;
+          padding: 8px;
+          border-radius: 999px;
+          transition: all .2s ease;
+          &:hover{
+            background-color: $white3;
+          }
+        }
+        .settings-box{
+          @include d-flex(column,flex-start,stretch);
+          position: absolute;
+          z-index: 999;
+          top: 0;
+          left: 0;
+          transform: translateX(-110%);
+          width: 200px;
+          border-radius: 6px;
+          padding: 8px;
+          background-color: $white1;
+          @include box-shadow(0,2px,8px,-4px,rgba(0,0,0));
+          gap: 8px;
+          @media screen and (max-width:480px) {
+            top: 110%;
+            left: unset;
+            right: 0;
+            transform: unset;
+          }
+          .box-haeder{
+            padding: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: $dark5;
+            text-align: center
+          }
+          .settings-items{
+            @include d-flex(row,space-around,center);
+            .settings-item{
+              padding: 4px 3px;
+              border-radius: 4px;
+              font-size: 14px;
+              color: $dark5;
+              width: 25px;
+              height: 25px;
+              @include d-flex-center;
+              cursor: pointer;
+              transition: all .2s ease;
+              &:hover{
+                background-color: $white3;
+              }
+            }
+            .active-settings-item{
+              background-color: $white3;
+            }
+          }
+        }
+      }
     }
     .category-products-wrapper{
       @include d-flex(row,flex-start,stretch);
@@ -401,8 +540,12 @@
             }
           }
         }
+        .pagination{
+          padding: 10px;
+          @include d-flex(row,flex-end,center);
+        }
         .category-products-content{
-          min-height: 250px;
+          min-height: 400px;
           position: relative;
           padding: 10px;
           width: 100%;
@@ -425,9 +568,10 @@
           .no-data-found{
             position: absolute;
             left: 50%;
-            top: 30px;
-            transform: translateX(-50%);
-            font-size: 20px;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            font-size: 24px;
+            font-weight: 500;
             color: $gray10;
           }
         }

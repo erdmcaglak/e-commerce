@@ -64,17 +64,25 @@
           :observer="true"
           :observeParents="true"
         >
-          <SwiperSlide v-for="(item,i) in props.sliderList" :key="'specialSlider'+i + item.id">
-            <Cart
-              :image="item.images[0]"
-              :brand="item.brand || ''"
-              :title="item.title"
-              :price="item.price"
-              :oldPrice="item.oldPrice || 0"
-              :discount="item.discountPercentage || 1"
-              :productId="item.id.toString()"
-            />
-          </SwiperSlide>
+          <template v-if="props.sliderList.length !== 0">
+            <SwiperSlide v-for="(item,i) in props.sliderList" :key="'specialSlider'+i + item.id">
+              <Cart
+                :image="item.images[0]"
+                :brand="item.brand || ''"
+                :title="item.title"
+                :price="item.price"
+                :oldPrice="item.oldPrice || 0"
+                :discount="item.discountPercentage || 1"
+                :productId="item.id.toString()"
+              />
+            </SwiperSlide>
+          </template>
+          <template v-else>
+            {{slidePerView}}
+            <SwiperSlide style="height:400px" v-for="i in slidePerView" :key="'skeletonSlider'+i+rand">
+              <SkeletonCart/>
+            </SwiperSlide>
+          </template>
         </Swiper>
       </ClientOnly>
     </div>

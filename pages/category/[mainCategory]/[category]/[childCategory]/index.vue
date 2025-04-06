@@ -1,5 +1,5 @@
 <script setup>
-import CategoryPage from "@/view/CategoryPage.vue"
+import CategoryPage from "@/view/CategoryView.vue"
 </script>
 
 <template>

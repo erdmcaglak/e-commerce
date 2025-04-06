@@ -1,7 +1,16 @@
 <script setup>
-const route = useRoute();
+  import {searchProd} from '@/utils/utils'
+  const route = useRoute();
 
-console.log({test: route.query});
+  const {q} = route.query;
+  const searchProds = ref([]);
+
+  onMounted(async () => {
+    if (!q) {
+      return;
+    }
+    searchProds.value = await searchProd(q);
+  });
 
 </script>
 

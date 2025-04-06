@@ -6,7 +6,7 @@
   const props = defineProps({
     products:{type:Object,default:()=>{return {}}},
     categories:{type:Array,default:()=>[]}
-  }) 
+  })
 
   const categories = ref([]);
   const activeCat = ref('');
