@@ -1,9 +1,9 @@
 <script setup>
   import {ref} from 'vue';
+  import {computed} from 'vue';
 
   const props = defineProps({
     totalPages:{type:Number,default:1},
-    viewablePageLimit:{type:Number,default:5},
   })
 
   const page = defineModel('page');
@@ -28,6 +28,13 @@
     }
   }
 
+  const getpaginationItemViewCondition = (i) =>{
+    const rightDiff = page.value- 3 < 0 ? (2 + Math.abs(page.value -3)) : 2;
+    const leftDiff = page.value +2 >= props.totalPages ? (2 + Math.abs(page.value +2 - props.totalPages)) : 2;
+
+    return page.value-leftDiff<=i && page.value+rightDiff >= i;
+  }
+
 </script>
 
 
@@ -37,11 +44,13 @@
       <Icon name="mdi:keyboard-arrow-left" size="28" color="#6D6D6D"/>
     </div>
     <div class="pagination-pages">
-      <div v-for="i in props.totalPages" :key="'paginationItem'+i" :class="['pagination-item', page === i ? 'selected-pagination-item' : '']" @click="goToPage(i)">
-        {{i}}
-      </div>
+      <template v-for="i in props.totalPages" :key="'paginationItem'+i">
+        <div v-if="getpaginationItemViewCondition(i)" :class="['pagination-item', page === i ? 'selected-pagination-item' : '']" @click="goToPage(i)">
+          {{i}}
+        </div>
+      </template>
     </div>
-    <div @click="goNext" v-if="page !== props.totalPages && props.totalPages" class="next pagination-item">
+    <div @click="goNext" class="next pagination-item">
       <Icon name="mdi:keyboard-arrow-right" size="28" color="#6D6D6D"/>
     </div>
   </div>
@@ -67,7 +76,6 @@
       @include d-flex-center;
       user-select: none;
       cursor: pointer;
-      transition: all .1s linear;
       position: relative;
       &:hover{
         background-color: $gray11;

@@ -22,11 +22,23 @@ export const getPriceFilterItems = (items,div) =>{
   const prices = items.map(e=>e.price);
   const min = Math.min(...prices);
   const max = Math.max(...prices);
-  const priceRange = parseFloat(parseFloat((max-min)/div).toFixed(2));
+  const priceRange = parseFloat(parseFloat((max)/div).toFixed(2));
   const resArr = [];
 
   let roundingFactor = Math.pow(10, Math.floor(Math.log10(priceRange)));
   const range = Math.ceil(priceRange / roundingFactor) * roundingFactor;
+
+  if(min === max) {
+    resArr.push({
+      min:min,
+      max:max,
+      title: `$${min}`,
+      count:items.filter(e=>e.price===max)?.length,
+      checkBoxHolder:false,
+    })
+    return resArr;
+  }
+
 
   for(let i=1;i<=div;i++){
     let minArea = parseFloat((Math.round((range * (i-1))*100)/100).toFixed(2));

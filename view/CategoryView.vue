@@ -29,47 +29,120 @@
   const activeFiltersList = ref([])
   const includedFilters = ref([]);
   const filtersArray = ref([
-    // {title:'Brand',value:'brand',children:getBrandFilterItems(categoryProducts,'brand')},
-    // {title:'Price',value:'price',children:getPriceFilterItems(categoryProducts,5)},
+    {title:'Brand',value:'brand'},
+    {title:'Price',value:'price'},
   ])
+  const firstAppliedFilter = ref('');
   const isProdctsFetched = ref(false);
 
 
   const changeActiveMultiply = (item) =>{
+    if(activeMultiplyItem.value === item) return;
     activeMultiplyItem.value = item;
     window.localStorage.setItem('multiplyBy',JSON.stringify(item));
+    isSettingsOpen.value = false;
+    generateProducts();
+  }
+
+  const clearDatas = () =>{
+    page.value = 1;
+    categoryProducts.value = [];
+    filteredCategoryProducts.value = [];
+    productHolder.value = [];
+    selectedSortItem.value = '';
+    activeFiltersList.value = [];
+    includedFilters.value = [];
+    firstAppliedFilter.value = '';
   }
 
   const generateProducts = async () =>{
+    clearDatas();
     isProdctsFetched.value = false;
-    categoryProducts.value = await getCategoryProducts(_category);
+    categoryProducts.value = await getCategoryProducts(_category,null,activeMultiplyItem.value);
     filteredCategoryProducts.value = [...categoryProducts.value];
     productHolder.value = [...categoryProducts.value];
     isProdctsFetched.value = true;
   }
 
-  onMounted(async () => {
-    if(window.localStorage.getItem('multiplyBy')){
-      activeMultiplyItem.value = JSON.parse(window.localStorage.getItem('multiplyBy'));
-    }
-    else{
-      window.localStorage.setItem('multiplyBy',JSON.stringify(1));
-    }
-
-    generateProducts();
-  })
-
   const getCurrentPageProdLastIndex = computed(() => {
-    return filteredCategoryProducts.value.length === 0 ? perPage.value : filteredCategoryProducts.value.length < ((page.value+1) * perPage.value) ? ((filteredCategoryProducts.value.length % perPage.value)) : perPage.value
+    return filteredCategoryProducts.value.length === 0 ? perPage.value : filteredCategoryProducts.value.length < (page.value * perPage.value) ? ((filteredCategoryProducts.value.length % perPage.value)) : perPage.value
   })
 
   const getTotalPage = computed(() => {
     return Math.ceil(filteredCategoryProducts.value.length/perPage.value)
   })
 
-  
-  
+  const filterChilds = computed(() => {
+    return {
+      'brand': getBrandFilterItems(firstAppliedFilter.value !== 'brand' ? filteredCategoryProducts.value : categoryProducts.value,'brand'),
+      'price': getPriceFilterItems(firstAppliedFilter.value !== 'price' ? filteredCategoryProducts.value : categoryProducts.value,5),
+    }
+  })
 
+  const openFilter = (item) =>{
+    if(activeFiltersList.value.includes(item.value)){
+      activeFiltersList.value.splice(activeFiltersList.value.indexOf(item.value),1);
+    }
+    else{
+      activeFiltersList.value.push(item.value);
+    }
+  }
+
+  const addToFilter = (filter,item,i) =>{
+    if(!!includedFilters.value.find(e=>e.filter.title === filter.title)){
+      includedFilters.value.splice(includedFilters.value.findIndex(e=>e.filter.title === filter.title),1);
+    }else{
+      filter.checkBoxHolder = true;
+      includedFilters.value.push({val:item.value,filter});
+    }
+    applyFilter();
+  }
+
+  const applyFilter = () => {
+    let filterKeys = [...new Set(includedFilters.value.map(e=>e.val).filter(e=>e))].filter(e=>e);
+    let activeProds = [];
+    if(!firstAppliedFilter.value){
+      firstAppliedFilter.value = filterKeys[0] ?? '';
+    }
+
+    if(filterKeys.length > 1){
+      activeProds = [...filteredCategoryProducts.value];
+    }
+    else{
+      activeProds = [...categoryProducts.value];
+    }
+
+    const res = [];
+
+    for(let included of includedFilters.value){
+      res.push(...activeProds.filter(e=>{
+        if(included.val === 'price'){
+          return e[included.val] > included.filter.min && e[included.val] <= included.filter.max
+        }
+        else{
+          return e[included.val] === included.filter.value
+        }
+      }));
+    }
+
+    if(res.length === 0) {
+      firstAppliedFilter.value = '';
+    }
+
+    filteredCategoryProducts.value = res.length === 0 ? [...categoryProducts.value] : res;
+    productHolder.value = [...filteredCategoryProducts.value];
+    sortProducts();
+  }
+
+  const sortProducts = () =>{
+    if(selectedSortItem.value){
+      let sortItem = sortByItems.find(e=>e.value === selectedSortItem.value)
+      productsSort(sortItem.sortKey,sortItem.type)
+    }
+    else{
+      clearSort();
+    }
+  }
 
   const productsSort = (key,type) =>{
     filteredCategoryProducts.value.sort((a,b)=>{
@@ -92,91 +165,20 @@
     filteredCategoryProducts.value = [...productHolder.value];
   }
 
-  const setDefaultProducts = () =>{
-    filteredCategoryProducts.value = [...categoryProducts];
-    productHolder.value = [...categoryProducts]
-  }
-
-  const sortAllProducts = () =>{
-    if(selectedSortItem.value){
-      let sortItem = sortByItems.find(e=>e.value === selectedSortItem.value)
-      productsSort(sortItem.sortKey,sortItem.type)
-    }
-    else{
-      clearSort();
-    }
-  }
-
   const getImage = (item) =>{
     return item?.images[item?.randomImageIndex || 0] || ''
   }
- 
-  const openFilter = (item) =>{
-    if(activeFiltersList.value.includes(item.value)){
-      activeFiltersList.value.splice(activeFiltersList.value.indexOf(item.value),1);
+
+  onMounted(async () => {
+    if(window.localStorage.getItem('multiplyBy')){
+      activeMultiplyItem.value = JSON.parse(window.localStorage.getItem('multiplyBy'));
     }
     else{
-      activeFiltersList.value.push(item.value);
-    }
-  }
-
-  const applyAllFilter = () =>{
-    let filterControl = includedFilters.value.map(e=>e.val).filter(e=>e);
-    let uniq = [...new Set(filterControl)].filter(e=>e);
-    let grouppedArr = [];
-    filteredCategoryProducts.value.splice(0);
-    productHolder.value = [...categoryProducts]
-
-    for(let filterItem of uniq){
-      let tempArr = []
-      for(let filter of includedFilters.value){
-        if(filter.val === filterItem){
-          tempArr.push(filter);
-        }
-      }
-      grouppedArr.push(tempArr);
+      window.localStorage.setItem('multiplyBy',JSON.stringify(1));
     }
 
-    const connectWithOr = (filterArr,secondArr) =>{
-      let tempArr = []
-      for(let item of filterArr){
-        if(Object.prototype.hasOwnProperty.call(item.filter,'min')){
-          tempArr.push(...secondArr.filter(e=>e.price>item.filter.min && e.price<=item.filter.max))
-        }
-        else{
-          tempArr.push(...secondArr.filter(e=>e.brand === item.filter.value))
-        }
-      }
-      return tempArr;
-    }
-
-    for(let filterArr of grouppedArr){
-      productHolder.value = connectWithOr(filterArr,productHolder.value);
-    }
-
-    filteredCategoryProducts.value = productHolder.value
-
-    if(grouppedArr.length === 0){
-      setDefaultProducts();
-    }
-
-    sortAllProducts();
-  }
-
-  const addFilter = (filter,item,i) =>{
-    if(!!includedFilters.value.find(e=>e.filter.title === filter.title)){
-      includedFilters.value.splice(includedFilters.value.findIndex(e=>e.filter.title === filter.title),1);
-      item.children.splice(i,1);
-      item.children.find(e=>e.title === filter.title).checkBoxHolder = false;  
-    }else{
-      filter.checkBoxHolder = true;
-      let temp = {...filter}
-      temp.isFake = true;
-      includedFilters.value.push({val:item.value,filter});
-      item.children.unshift(temp);
-    }
-    applyAllFilter()
-  }
+    generateProducts();
+  })
   
 </script>
 
@@ -190,7 +192,7 @@
         <h1 class="category-name">
           {{ props.title || kebabToCapitalize(breadCrumbArr.at(-1)) }}
         </h1>
-        <!-- <div class="view-settings">
+        <div class="view-settings">
           <div class="settings-icon" @click="isSettingsOpen = !isSettingsOpen">
             <Icon name="mdi:settings" size="24" color="#000000"/>
           </div>
@@ -209,13 +211,13 @@
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
       </div>
       
       <div class="category-products-wrapper">
         <div class="filter-wrapper">
           <div class="sticky-filter">
-            <!-- <p class="filter-header">
+            <p class="filter-header">
               Filter By
             </p>
             <div class="filters">
@@ -225,10 +227,19 @@
                   <Icon :class="['filter-item-header-arrow',activeFiltersList.includes(item.value) ? 'rotate-arrow' : '']" name="mdi:menu-right" size="20"/>
                 </div>
                 <div :class="['filter-item-children-wrapper',activeFiltersList.includes(item.value) ? 'open' : '']">
-                  <template v-for="(filter,k) in item.children" :key="'filterChild'+k+i">
-                    <div v-if="filter.count" :class="['filter-item-children',includedFilters.find(e=>e.filter.title === filter.title) ? 'included':'',filter.checkBoxHolder && !filter.isFake ? 'hide' : '']" @change="addFilter(filter,item,k)">
-                      <input v-model="filter.checkBoxHolder" class="filter-checkbox" type="checkbox" :id="'filterCheckbox'+k+i">
-                      <label :class="filter.checkBoxHolder ? 'selected-checkbox' : ''" :for="'filterCheckbox'+k+i">
+                  <template v-for="(included,t) in includedFilters" :key="'included'+t+i">
+                    <div v-if="included.val === item.value" class="filter-item-children included" @change="addToFilter(included.filter,item,'up')">
+                      <input v-model="included.filter.checkBoxHolder" class="filter-checkbox" type="checkbox" :id="'includedfilterCheckbox'+t+i">
+                      <label :class="included.filter.checkBoxHolder ? 'selected-checkbox' : ''" :for="'includedfilterCheckbox'+t+i">
+                        <span class="filter-title name">{{ included.filter.title }}</span>
+                        <span class="filter-title">({{ included.filter.count }})</span>
+                      </label>
+                    </div>
+                  </template>
+                  <template v-for="(filter,k) in (filterChilds[item?.value] || [])" :key="'filterChild'+k+i">
+                    <div v-if="filter.count" :class="['filter-item-children',!!includedFilters.find(e=>e.filter.title === filter.title) ? 'hide' : '']" @change="addToFilter(filter,item,'down')">
+                      <input class="filter-checkbox" type="checkbox" :id="'filterCheckbox'+k+i">
+                      <label :for="'filterCheckbox'+k+i">
                         <span class="filter-title name">{{ filter.title }}</span>
                         <span class="filter-title">({{ filter.count }})</span>
                       </label>
@@ -236,12 +247,12 @@
                   </template>
                 </div>
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
         <div class="category-products">
-          <!-- <div class="category-products-sort p10">
-            <select name="sortBy" v-model="selectedSortItem" @change="sortAllProducts" class="sort-select-box">
+          <div class="category-products-sort p10">
+            <select name="sortBy" v-model="selectedSortItem" @change="sortProducts" class="sort-select-box">
               <option selected value="">Sort By</option>
               <option v-for="(sortItem,i) in sortByItems" :key="'sortItems'+i" :value="sortItem.value">{{ sortItem.title }}</option>
             </select>
@@ -250,13 +261,13 @@
                 <span>{{ filteredCategoryProducts.length }}</span> items
               </div>
               <div class="view-per-page">
-                View <span>{{ filteredCategoryProducts.length }}</span> per page
+                View <span>{{ perPage }}</span> per page
               </div>
             </div>
-          </div> -->
+          </div>
           <div class="pagination">
-            <LoadingSkeleton v-if="!getTotalPage" style="height:40px;width:35%"/>
-            <CustomPagination v-else v-model:page="page" :totalPages="getTotalPage"/>
+            <LoadingSkeleton v-if="!getTotalPage && !(isProdctsFetched && filteredCategoryProducts.length === 0)" style="height:35px;width:35%"/>
+            <CustomPagination v-else-if="!(isProdctsFetched && filteredCategoryProducts.length === 0)" v-model:page="page" :totalPages="getTotalPage"/>
           </div>
           <div class="category-products-content">
             <template v-if="isProdctsFetched && filteredCategoryProducts.length === 0">
@@ -281,7 +292,8 @@
             </template>
           </div>
           <div class="pagination">
-            <CustomPagination v-model:page="page" :totalPages="getTotalPage"/>
+            <LoadingSkeleton v-if="!getTotalPage && !(isProdctsFetched && filteredCategoryProducts.length === 0)" style="height35px;width:35%"/>
+            <CustomPagination v-else-if="!(isProdctsFetched && filteredCategoryProducts.length === 0)" v-model:page="page" :totalPages="getTotalPage"/>
           </div>
         </div>
       </div>

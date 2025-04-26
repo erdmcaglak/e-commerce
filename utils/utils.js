@@ -37,17 +37,12 @@ const _getAccessableCategories = (category) =>{
   return resArr;
 }
 
-const _setProductsLength = (arr) =>{
-  const multipleArr = (tempArr) =>{
-    tempArr.push(...JSON.parse(JSON.stringify(tempArr)));
-    if(tempArr.length < 50){
-      return multipleArr(arr);
-    }
-    return tempArr;
+const _setProductsLength = (arr,multiply=1) =>{
+  const res = [];
+  for(let i=0;i<multiply;i++){
+    res.push(...Array.from(arr))
   }
-  if(arr.length > 0) return multipleArr(arr);
-
-  return undefined
+  return res;
 }
 
 const _setOldPrice = (prods) =>{
@@ -91,7 +86,7 @@ export const kebabToCapitalize = (item)=>{
   return splittedStr.join(' ');
 }
 
-export const getCategoryProducts = async (category,limit)=>{
+export const getCategoryProducts = async (category,limit,multiply)=>{
   try{
     const categories = _getAccessableCategories(category);
 
@@ -111,7 +106,7 @@ export const getCategoryProducts = async (category,limit)=>{
     }
     
     
-    return limit ? _setOldPrice(_setProductsLength(resultArr)).slice(0,limit) : _setOldPrice(_setProductsLength(resultArr));
+    return limit ? _setOldPrice(_setProductsLength(resultArr,multiply)).slice(0,limit) : _setOldPrice(_setProductsLength(resultArr,multiply));
   }catch(e){
     console.error(e);
     return [];
