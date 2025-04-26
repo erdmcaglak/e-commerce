@@ -56,7 +56,7 @@
     cursor: pointer;
     border-radius: 4px;
     max-height: 800px;
-    min-height: 250px;
+    min-height: 500px;
     @media screen and (max-width:768px) {
       min-height: 500px;
       max-height: 500px;
@@ -86,11 +86,13 @@
       }
     }
     .min-250{
+      max-height: 800px;
       height: 500px;
+      min-height: 250px;
       @media screen and (max-width:768px) {
         min-height: 500px;
-        height:500px;
         max-height: 500px;
+        height: 500px;
       }
     }
     .img{
