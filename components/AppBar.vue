@@ -17,6 +17,7 @@
   const _debounce = ref();
 
   const router = useRouter();
+  const route = useRoute();
 
   const openSearch = () =>{
     isOpenedSearch.value = true;
@@ -58,6 +59,7 @@
 
   const goToSearchPage = (e) =>{
     if(search.value){
+      isOpenedSearch.value = false;
       router.push('/search?q='+search.value);
     }
   }
@@ -90,6 +92,10 @@
       clearTimeout(_debounce.value);
     }
 
+    if(!isOpenedSearch.value){
+      isOpenedSearch.value = true;
+    }
+
     if(!newValue){
       generateRandom();
       return;
@@ -99,9 +105,22 @@
       searchProds.value = await searchProd(newValue);
       generateCategories(Array.from(new Set(searchProds.value.map(e=>e.category))),searchProds.value);
       searchBoxCatProds.value['random'] = searchProds.value.slice(0,8);
+      if(searchProds.value.length === 0){
+        searchBoxCatProds.value['empty'] = await getProducts(8);
+      }
+      else if(Object.prototype.hasOwnProperty.call(searchBoxCatProds.value,'empty')){
+        delete searchBoxCatProds.value['empty'];
+      }
     },300)
-    
   });
+
+  watch(() => route.path,
+    (newPath) => {
+      if (newPath !== '/search' && search.value) {
+        search.value = '';
+      }
+    }
+  )
 </script>
 <template>
   <div class="container">
@@ -112,12 +131,12 @@
       <div class="search-area">
         <div v-if="!props.modeCheckout" class="search-wrapper" @click.stop>
           <Icon name="mdi:magnify" color="black" size="24"/>
-          <input @focus="openSearch" @keypress.enter="goToSearchPage" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+          <input ref="searchInp1" @focus="openSearch" @keypress.enter="goToSearchPage" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
         </div>
         <transition name="fade"> 
           <SearchBox v-if="isOpenedSearch" :categories="searchBoxCategories" :products="searchBoxCatProds" @close="isOpenedSearch=false">
             <template v-slot:search-input>
-              <input ref="searchInp" @keypress.enter="goToSearchPage" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+              <input ref="searchInp2" @keypress.enter="goToSearchPage" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
             </template>
           </SearchBox>
         </transition>

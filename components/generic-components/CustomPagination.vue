@@ -50,7 +50,7 @@
         </div>
       </template>
     </div>
-    <div @click="goNext" class="next pagination-item">
+    <div @click="goNext" v-if="props.totalPages!== 1" class="next pagination-item">
       <Icon name="mdi:keyboard-arrow-right" size="28" color="#6D6D6D"/>
     </div>
   </div>

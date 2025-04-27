@@ -24,23 +24,8 @@
       })
     }
 
-    categories.value = arr;
+    categories.value = arr.splice(0,6);
   }
-
-  onMounted(() => {
-    fillCategories();
-  });
-
-  const getItem = () =>{
-    let key = Object.keys(props.products)[0];
-    return props.products[key][0];
-  }
-
-  const goToRoute = (category) =>{
-    router.push('/category'+category.route);
-    emit('close');
-  }
-
 
   watch(()=>props.categories, (newValue, oldValue) => {
     fillCategories();
@@ -48,6 +33,15 @@
     immediate:true,
     deep:true
   });
+
+  onMounted(() => {
+    fillCategories();
+  });
+
+  const goToRoute = (category) =>{
+    router.push('/category'+category.route);
+    emit('close');
+  }
 
 </script>
 <template>
@@ -61,31 +55,61 @@
         Cancel
       </div>
     </div>
-    <div class="search-box-categories">
-      <div class="category-header">
-        <span>Categories</span>
-        <Icon v-if="activeCat" @click="activeCat = ''" style="cursor:pointer" name="mdi:undo-variant" color="black" size="18"/>
+    <template v-if="props.products[activeCat || 'random']?.length !== 0">
+      <div class="search-box-categories">
+        <div class="category-header">
+          <span>Categories</span>
+          <Icon v-if="activeCat" @click="activeCat = ''" style="cursor:pointer" name="mdi:undo-variant" color="black" size="18"/>
+        </div>
+        <Divider/>
+        <div :class="['category-item',activeCat===category.category ? 'active' : '']" v-for="(category,i) in categories" :key="'category'+i" @mouseenter="activeCat=category.category" @click="goToRoute(category)">
+          {{ category.title }}
+        </div>
+        <div class="search-artisan-logo">
+          <img src="/logo.png" alt="Artisan">
+        </div>
       </div>
-      <Divider/>
-      <div :class="['category-item',activeCat===category.category ? 'active' : '']" v-for="(category,i) in categories" :key="'category'+i" @mouseenter="activeCat=category.category" @click="goToRoute(category)">
-        {{ category.title }}
+      <div class="search-box-products">
+        <Cart
+          small
+          v-for="(item,i) in (props.products[activeCat || 'random'])" 
+          :key="'searcboxCart'+i + item.id"
+          :image="item.images[0]"
+          :brand="item.brand || ''"
+          :title="item.title"
+          :price="item.price"
+          :oldPrice="item.oldPrice || 0"
+          :discount="item.discountPercentage || 1"
+          :productId="item.id.toString()"
+          :class="'search-box-cart-item'"
+        />
       </div>
-    </div>
-    <div class="search-box-products">
-      <Cart
-        small
-        v-for="(item,i) in (props.products[activeCat || 'random'])" 
-        :key="'searcboxCart'+i + item.id"
-        :image="item.images[0]"
-        :brand="item.brand || ''"
-        :title="item.title"
-        :price="item.price"
-        :oldPrice="item.oldPrice || 0"
-        :discount="item.discountPercentage || 1"
-        :productId="item.id.toString()"
-        :class="'search-box-cart-item'"
-      />
-    </div>
+    </template>
+    <template v-else>
+      <div class="empty-search-wrapper">
+        <div class="search-icon-wrapper">
+          <Icon name="mdi:magnify" color="#6D6D6D" size="64"/>
+        </div>
+        <div class="empty-search-text">No products found</div>
+        <div class="empty-search-text">Try searching for something else</div>
+        <div class="search-box-products">
+          <Cart
+            small
+            v-for="(item,i) in (props.products['empty'])" 
+            :key="'emptySearch'+i + item.id"
+            :image="item.images[0]"
+            :brand="item.brand || ''"
+            :title="item.title"
+            :price="item.price"
+            :oldPrice="item.oldPrice || 0"
+            :discount="item.discountPercentage || 1"
+            :productId="item.id.toString()"
+            :class="'search-box-cart-item'"
+          />
+        </div>
+      </div>
+      
+    </template>
   </div>
 </template>
 
@@ -157,7 +181,26 @@
       font-weight: 600;
     }
   }
+  .empty-search-wrapper{
+    @include d-flex(column,flex-start,stretch);
+    gap: 8px;
+    width: 100%;
+    .empty-search-text{
+      text-align: center;
+      font-size: 16px;
+      color: $gray12;
+      font-weight: 600;
+    }
+    .empty-search-text:nth-child(2){
+      color: $gray11;
+      font-size: 14px;
+    }
+    .search-icon-wrapper{
+      @include d-flex-center;
+    }
+  }
   .search-box-categories{
+    position: relative;
     min-width: 200px;
     flex: 2;
     @include d-flex(column,flex-start,stretch);
@@ -190,6 +233,22 @@
     }
     .active{
       background-color: $white2;
+    }
+    .search-artisan-logo{
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      @include d-flex-center;
+      img{
+        width: 100%;
+        height: auto;
+        max-width: 120px;
+        max-height: 50px;
+      }
+      @media screen and (max-width:768px) {
+        display: none;
+      }
     }
   }
   .search-box-products{

@@ -1,5 +1,5 @@
 <script setup>
-  import {kebabToCapitalize,getCategoryProducts} from '@/utils/utils'
+  import {kebabToCapitalize,getCategoryProducts,searchProd} from '@/utils/utils'
   import {getBrandFilterItems,getPriceFilterItems} from '@/utils/functions'
   import {sortByItems} from '@/enums/enum'
   import {ref,computed} from 'vue'
@@ -8,12 +8,11 @@
     products:{type:Array,default:()=>[]},
     title:{type:String,default:''},
     hideBreadcrump:{type:Boolean,default:false},
+    sQuery:{type:String,default:''},
   })
 
-
-  //TODO searchProducts'a göre search sayfası veya category sayfası açılacak.
-
   const route = useRoute()
+  const router = useRouter()
   const {mainCategory,category,childCategory} = route.params;
   const breadCrumbArr = [mainCategory,category,childCategory].filter(e=>e);
   const _category = ['mens','womens'].includes(category) && childCategory ? category + '-' + childCategory : breadCrumbArr.at(-1)
@@ -25,6 +24,7 @@
   const categoryProducts = ref([]);
   const filteredCategoryProducts = ref([])
   const productHolder = ref([])
+  const prodHolderForFilters = ref([])
   const selectedSortItem = ref('');
   const activeFiltersList = ref([])
   const includedFilters = ref([]);
@@ -58,9 +58,10 @@
   const generateProducts = async () =>{
     clearDatas();
     isProdctsFetched.value = false;
-    categoryProducts.value = await getCategoryProducts(_category,null,activeMultiplyItem.value);
-    filteredCategoryProducts.value = [...categoryProducts.value];
+    categoryProducts.value = props.sQuery ? await searchProd(props.sQuery) : await getCategoryProducts(_category,null,activeMultiplyItem.value);
+    filteredCategoryProducts.value =[...categoryProducts.value];
     productHolder.value = [...categoryProducts.value];
+    prodHolderForFilters.value = [...categoryProducts.value];
     isProdctsFetched.value = true;
   }
 
@@ -74,8 +75,8 @@
 
   const filterChilds = computed(() => {
     return {
-      'brand': getBrandFilterItems(firstAppliedFilter.value !== 'brand' ? filteredCategoryProducts.value : categoryProducts.value,'brand'),
-      'price': getPriceFilterItems(firstAppliedFilter.value !== 'price' ? filteredCategoryProducts.value : categoryProducts.value,5),
+      'brand': getBrandFilterItems(firstAppliedFilter.value !== 'brand' ? prodHolderForFilters.value : categoryProducts.value,'brand'),
+      'price': getPriceFilterItems(firstAppliedFilter.value !== 'price' ? prodHolderForFilters.value : categoryProducts.value,5),
     }
   })
 
@@ -88,49 +89,76 @@
     }
   }
 
-  const addToFilter = (filter,item,i) =>{
+  const addToFilter = (filter,val) =>{
     if(!!includedFilters.value.find(e=>e.filter.title === filter.title)){
       includedFilters.value.splice(includedFilters.value.findIndex(e=>e.filter.title === filter.title),1);
     }else{
       filter.checkBoxHolder = true;
-      includedFilters.value.push({val:item.value,filter});
+      includedFilters.value.push({val,filter});
     }
     applyFilter();
+
+    if(val === firstAppliedFilter.value){
+      prodHolderForFilters.value = [...filteredCategoryProducts.value];
+    }
   }
 
   const applyFilter = () => {
     let filterKeys = [...new Set(includedFilters.value.map(e=>e.val).filter(e=>e))].filter(e=>e);
-    let activeProds = [];
-    if(!firstAppliedFilter.value){
-      firstAppliedFilter.value = filterKeys[0] ?? '';
-    }
+    let activeProds = [...categoryProducts.value];
 
-    if(filterKeys.length > 1){
-      activeProds = [...filteredCategoryProducts.value];
-    }
-    else{
-      activeProds = [...categoryProducts.value];
-    }
-
-    const res = [];
-
+    const filterQueryHolder = {};
+    const includedFiltersMap = {};
     for(let included of includedFilters.value){
-      res.push(...activeProds.filter(e=>{
-        if(included.val === 'price'){
-          return e[included.val] > included.filter.min && e[included.val] <= included.filter.max
-        }
-        else{
-          return e[included.val] === included.filter.value
-        }
-      }));
+      if(!Object.prototype.hasOwnProperty.call(includedFiltersMap,included.val)){
+        includedFiltersMap[included.val] = []
+      }
+      includedFiltersMap[included.val].push(included.filter);
     }
 
-    if(res.length === 0) {
-      firstAppliedFilter.value = '';
+    for(let key in includedFiltersMap){
+      let res = [];
+      for(let filt of includedFiltersMap[key]){
+        for(let item of activeProds){
+          if(key === 'price'){
+            if((item[key] > filt.min && item[key] <= filt.max) || item[key] === filt.max){
+              res.push(item);
+            }
+          }
+          else{
+            if(item[key] === filt.value){
+              res.push(item);
+            }
+          }
+        }
+        if(!Object.prototype.hasOwnProperty.call(filterQueryHolder,key)){
+          filterQueryHolder[key] = []
+        }
+
+        filterQueryHolder[key].push(filt.value);
+      }
+      activeProds = res;
     }
 
-    filteredCategoryProducts.value = res.length === 0 ? [...categoryProducts.value] : res;
+    filteredCategoryProducts.value = activeProds;
     productHolder.value = [...filteredCategoryProducts.value];
+
+    if(!firstAppliedFilter.value || !filterKeys.includes(firstAppliedFilter.value)){
+      firstAppliedFilter.value = filterKeys[0] ?? '';
+      prodHolderForFilters.value = [...filteredCategoryProducts.value];
+    }
+
+    let filterQuery = Object.keys(filterQueryHolder).map(e=>{
+      return `${firstAppliedFilter.value === e ? `f_${e}` : e}=${filterQueryHolder[e].join(',')}`
+    }).join('&');
+
+    let queryPath = `${route.path}?${filterQuery}`;
+    router.push(queryPath);
+    if(filterKeys.length === 0){
+      firstAppliedFilter.value = '';
+      prodHolderForFilters.value = [...filteredCategoryProducts.value];
+    }
+
     sortProducts();
   }
 
@@ -169,6 +197,31 @@
     return item?.images[item?.randomImageIndex || 0] || ''
   }
 
+  const addToFilterFromQuery = () =>{
+    let queryFilters = {};
+    for(let key in route.query){
+      if(key.includes('f_')){
+        firstAppliedFilter.value = key.replace('f_','');
+      }
+      queryFilters[key.replace('f_','')] = route.query[key]?.split(',')?.map(e=>e.trim()) || [];
+    }
+
+    if(firstAppliedFilter.value){
+      let filters = filterChilds.value[firstAppliedFilter.value]?.filter(e=>queryFilters[firstAppliedFilter.value]?.includes(e.value)) || [];
+      for(let filter of filters){
+        addToFilter(filter,firstAppliedFilter.value);
+      }
+      delete queryFilters[firstAppliedFilter.value];
+    }
+
+    for(let key in queryFilters){
+      let filters = filterChilds.value[key]?.filter(e=>queryFilters[key]?.includes(e.value)) || [];
+      for(let filter of filters){
+        addToFilter(filter,key);
+      }
+    }
+  }
+
   onMounted(async () => {
     if(window.localStorage.getItem('multiplyBy')){
       activeMultiplyItem.value = JSON.parse(window.localStorage.getItem('multiplyBy'));
@@ -177,7 +230,11 @@
       window.localStorage.setItem('multiplyBy',JSON.stringify(1));
     }
 
-    generateProducts();
+    await generateProducts();
+
+    if(Object.keys(route.query).length > 0){
+      addToFilterFromQuery();
+    }
   })
   
 </script>
@@ -189,9 +246,12 @@
         :categoryArr="breadCrumbArr"
       />
       <div class="view-header">
-        <h1 class="category-name">
+        <h1 class="category-name" v-if="!props.sQuery">
           {{ props.title || kebabToCapitalize(breadCrumbArr.at(-1)) }}
         </h1>
+        <div class="category-name search-name" v-else>
+          <span>Search results for </span>{{ props.sQuery }}
+        </div>
         <div class="view-settings">
           <div class="settings-icon" @click="isSettingsOpen = !isSettingsOpen">
             <Icon name="mdi:settings" size="24" color="#000000"/>
@@ -215,7 +275,7 @@
       </div>
       
       <div class="category-products-wrapper">
-        <div class="filter-wrapper">
+        <div class="filter-wrapper" v-if="!(isProdctsFetched && categoryProducts.length === 0)">
           <div class="sticky-filter">
             <p class="filter-header">
               Filter By
@@ -228,7 +288,7 @@
                 </div>
                 <div :class="['filter-item-children-wrapper',activeFiltersList.includes(item.value) ? 'open' : '']">
                   <template v-for="(included,t) in includedFilters" :key="'included'+t+i">
-                    <div v-if="included.val === item.value" class="filter-item-children included" @change="addToFilter(included.filter,item,'up')">
+                    <div v-if="included.val === item.value" class="filter-item-children included" @change="addToFilter(included.filter,item.value)">
                       <input v-model="included.filter.checkBoxHolder" class="filter-checkbox" type="checkbox" :id="'includedfilterCheckbox'+t+i">
                       <label :class="included.filter.checkBoxHolder ? 'selected-checkbox' : ''" :for="'includedfilterCheckbox'+t+i">
                         <span class="filter-title name">{{ included.filter.title }}</span>
@@ -237,7 +297,7 @@
                     </div>
                   </template>
                   <template v-for="(filter,k) in (filterChilds[item?.value] || [])" :key="'filterChild'+k+i">
-                    <div v-if="filter.count" :class="['filter-item-children',!!includedFilters.find(e=>e.filter.title === filter.title) ? 'hide' : '']" @change="addToFilter(filter,item,'down')">
+                    <div v-if="filter.count" :class="['filter-item-children',!!includedFilters.find(e=>e.filter.title === filter.title) ? 'hide' : '']" @change="addToFilter(filter,item.value)">
                       <input class="filter-checkbox" type="checkbox" :id="'filterCheckbox'+k+i">
                       <label :for="'filterCheckbox'+k+i">
                         <span class="filter-title name">{{ filter.title }}</span>
@@ -251,14 +311,14 @@
           </div>
         </div>
         <div class="category-products">
-          <div class="category-products-sort p10">
+          <div class="category-products-sort p10" v-if="!(isProdctsFetched && filteredCategoryProducts.length === 0)">
             <select name="sortBy" v-model="selectedSortItem" @change="sortProducts" class="sort-select-box">
               <option selected value="">Sort By</option>
               <option v-for="(sortItem,i) in sortByItems" :key="'sortItems'+i" :value="sortItem.value">{{ sortItem.title }}</option>
             </select>
             <div class="category-items-info">
               <div class="total-count">
-                <span>{{ filteredCategoryProducts.length }}</span> items
+                <span>{{ filteredCategoryProducts.length }}</span> products
               </div>
               <div class="view-per-page">
                 View <span>{{ perPage }}</span> per page
@@ -311,6 +371,17 @@
         text-align: left;
         padding: 10px 0;
         margin: 10px 0;
+      }
+      .search-name{
+        font-size: 18px;
+        font-weight: 500;
+        color: $dark5;
+        span{
+          font-size: 16px;
+          color: $gray9;
+          font-weight: 400;
+          margin-left: 4px;
+        }
       }
       .view-settings{
         @include d-flex-center;

@@ -1,25 +1,25 @@
 <script setup>
-  import {searchProd} from '@/utils/utils'
+  import CategoryPage from "@/view/CategoryView.vue"
   const route = useRoute();
 
   const {q} = route.query;
-  const searchProds = ref([]);
 
-  onMounted(async () => {
-    if (!q) {
-      return;
+  const sQuery = ref(q);
+
+  watch(() => route.query.q,
+    (newQuery, oldQuery) => {
+      if (newQuery !== oldQuery && newQuery) {
+        sQuery.value = newQuery;
+      }
     }
-    searchProds.value = await searchProd(q);
-  });
+  )
 
 </script>
 
 <template>
-  <div>
-    test
-  </div>
+  <CategoryPage 
+    :key="sQuery"
+    hideBackground
+    :sQuery="sQuery"
+  />
 </template>
-
-<style lang="scss">
-
-</style>

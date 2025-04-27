@@ -32,6 +32,7 @@ export const getPriceFilterItems = (items,div) =>{
     resArr.push({
       min:min,
       max:max,
+      value:`${max}`,
       title: `$${min}`,
       count:items.filter(e=>e.price===max)?.length,
       checkBoxHolder:false,
@@ -46,6 +47,7 @@ export const getPriceFilterItems = (items,div) =>{
     resArr.push({
       min:minArea,
       max:maxArea,
+      value:`${minArea}${maxArea}`,
       title: `$${minArea} - $${maxArea}`,
       count:items.filter(e=>e.price>minArea && e.price <=maxArea)?.length,
       checkBoxHolder:false,

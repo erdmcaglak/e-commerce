@@ -43,7 +43,7 @@ export const menuItems=[
       {title:'Women Bags',value:'womens-bags',route:'/category/clothes/womens/bags',options:['color']},
       {title:'Women Jewellery',value:'womens-jewellery',route:'/category/clothes/womens/jewellery'},
     ]},
-    {title:'Men',value:'mens',route:'/category/clothes/men',children:[
+    {title:'Men',value:'mens',route:'/category/clothes/mens',children:[
       {title:'Men Shirts',value:'mens-shirts',route:'/category/clothes/mens/shirts',options:['default','color']},
       {title:'Men Shoes',value:'mens-shoes',route:'/category/clothes/mens/shoes',options:['number','color']},
       {title:'Men Watches',value:'mens-watches',route:'/category/clothes/mens/watches',options:['color']},
