@@ -50,6 +50,7 @@
       <div class="search-input-wrapper">
         <Icon name="mdi:magnify" color="black" size="24"/>
         <slot ref="searchInp" name="search-input"></slot>
+        <Icon name="mdi:magnify" color="black" size="24"/>
       </div>
       <div class="cancel" @click="()=>{emit('close')}">
         Cancel
@@ -82,6 +83,7 @@
           :discount="item.discountPercentage || 1"
           :productId="item.id.toString()"
           :class="'search-box-cart-item'"
+          @click="$emit('close')"
         />
       </div>
     </template>

@@ -7,10 +7,42 @@
   const recomendedForYou = ref([])
   const shopTheLook = ref([])
   const ourPicks = ref([])
+  const lastVisitWidgets = ref([]);
 
   recomendedForYou.value = await getProducts();
   shopTheLook.value = await getProducts();
   ourPicks.value = await getProducts();
+
+  onMounted(() => {
+    if(!window.localStorage.getItem('last-visited')){
+      window.localStorage.setItem('last-visited',JSON.stringify([]))
+    }
+
+    let lastVisitedList = JSON.parse(window.localStorage.getItem('last-visited'));
+
+    lastVisitWidgets.value = lastVisitedList
+  })
+
+  useHead({
+    title: 'Modern Shopping',
+    meta: [
+      { name: 'description', content: 'Discover trending products with Artisan. Experience modern and fast online shopping.' },
+      { name: 'keywords', content: 'artisan, e-commerce, online shopping, shop, vue3, nuxt3' },
+
+      // Open Graph
+      { property: 'og:type', content: 'website' },
+      { property: 'og:title', content: 'Artisan - Modern Shopping' },
+      { property: 'og:description', content: 'Experience modern online shopping with Artisan. Trending products await you.' },
+      { property: 'og:image', content: 'https://artisanzen.vercel.app/logo.png' },
+      { property: 'og:url', content: 'https://artisanzen.vercel.app/' },
+
+      // Twitter
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Artisan - Modern Shopping' },
+      { name: 'twitter:description', content: 'Experience modern online shopping with Artisan.' },
+      { name: 'twitter:image', content: 'https://artisanzen.vercel.app/logo.png' }
+    ]
+  })
 
 </script>
 
@@ -38,6 +70,11 @@
     <Slider
       sliderTitle="Our Picks"
       :sliderList="ourPicks"
+    />
+    <Slider
+      v-if="lastVisitWidgets.length > 0"
+      sliderTitle="Last Visited"
+      :sliderList="lastVisitWidgets"
     />
   </div>
   

@@ -59,8 +59,11 @@
 
   const goToSearchPage = (e) =>{
     if(search.value){
-      isOpenedSearch.value = false;
       router.push('/search?q='+search.value);
+      search.value = '';
+      setTimeout(()=>{
+        isOpenedSearch.value = false;
+      })
     }
   }
 
@@ -131,12 +134,12 @@
       <div class="search-area">
         <div v-if="!props.modeCheckout" class="search-wrapper" @click.stop>
           <Icon name="mdi:magnify" color="black" size="24"/>
-          <input ref="searchInp1" @focus="openSearch" @keypress.enter="goToSearchPage" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+          <input ref="searchInp1" @focus="openSearch" @keypress.enter="goToSearchPage" v-model="search" type="search" autocomplete="off" spellcheck="false" placeholder="Search">
         </div>
         <transition name="fade"> 
           <SearchBox v-if="isOpenedSearch" :categories="searchBoxCategories" :products="searchBoxCatProds" @close="isOpenedSearch=false">
             <template v-slot:search-input>
-              <input ref="searchInp2" @keypress.enter="goToSearchPage" v-model="search" type="text" autocomplete="off" spellcheck="false" placeholder="Search">
+              <input ref="searchInp2" @keypress.enter="goToSearchPage" v-model="search" type="search" autocomplete="off" spellcheck="false" placeholder="Search">
             </template>
           </SearchBox>
         </transition>
@@ -148,7 +151,7 @@
           <span class="child-2"></span>
           <span class="child-3"></span>
         </div>
-        <div class="icon-wrapper">
+        <!-- <div class="icon-wrapper">
           <Button
             icon="mdi:account"
             fontSize="24px"
@@ -159,7 +162,7 @@
             hoveredColor="#000"
             padding="0"
           />
-        </div>
+        </div> -->
         <NuxtLink to="/cart" class="icon-wrapper">
           <Button
             icon="mdi:cart-outline"
@@ -190,7 +193,7 @@
         </div>
       </div>
     </div>
-    <Menu v-if="!props.modeCheckout"/>
+    <Menu v-if="!props.modeCheckout" @toggleMenu="toggleMenu"/>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -199,7 +202,7 @@
   width: 100%;
   position: sticky;
   top: 0;
-  z-index: 9999;
+  z-index: 999;
   @media screen and (max-width:768px){
     position: relative;
   }

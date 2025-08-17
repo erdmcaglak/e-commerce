@@ -1,5 +1,8 @@
 <script setup>
 import {menuItems} from '@/enums/enum'
+import {isMobileDevice} from '@/utils/utils'
+
+defineEmits(['toggleMenu'])
 
 const activeMenu = ref('')
 const lastActiveMenu = ref('')
@@ -22,7 +25,9 @@ const setActiveMenu = (value,hard) =>{
       <NuxtLink 
         :class="['menu-title p10', item.value==='all-categories' ? 'all-category' : '']"
         :to="item.route"
-        activeClass="active-main-route">
+        activeClass="active-main-route"
+        @click="isMobileDevice() ? $emit('toggleMenu') : ()=>{}"
+      >
           <Icon v-if="item.icon" :name="item.icon" size="24"/>
           <span>{{ item.title }}</span>
       </NuxtLink>
@@ -35,14 +40,16 @@ const setActiveMenu = (value,hard) =>{
             <NuxtLink 
               class="menu-item p8"
               :to="childItem.route"
-              activeClass="active-child-route">
+              activeClass="active-child-route"
+            >
               {{ childItem.title }}
             </NuxtLink>
             <template v-for="(deepChildItem,l) in childItem.children" :key="'deepChildItem'+l">
               <NuxtLink 
                 class="menu-item p8"
                 :to="deepChildItem.route"
-                activeClass="active-child-route">
+                activeClass="active-child-route"
+              >
                 {{ deepChildItem.title }}
               </NuxtLink>
             </template>

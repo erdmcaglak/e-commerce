@@ -96,6 +96,20 @@
       filter.checkBoxHolder = true;
       includedFilters.value.push({val,filter});
     }
+
+    if(firstAppliedFilter.value === val){
+      let indexHolder = [];
+      for(let i=0;i<includedFilters.value.length;i++){
+        if(includedFilters.value[i].val !== val){
+          indexHolder.push(i);
+        }
+      }
+
+      for(let i=0;i< indexHolder.length;i++){
+        includedFilters.value.splice(indexHolder[i]-i,1)
+      }
+    }
+
     applyFilter();
 
     if(val === firstAppliedFilter.value){
@@ -236,6 +250,26 @@
       addToFilterFromQuery();
     }
   })
+
+  useHead({
+    title: `${kebabToCapitalize(breadCrumbArr.at(-1))}`,
+    meta: [
+      { name: 'description', content: `Discover the most popular products in the ${kebabToCapitalize(breadCrumbArr.at(-1))} category with Artisan.` },
+
+      // Open Graph
+      { property: 'og:type', content: 'website' },
+      { property: 'og:title', content: `${kebabToCapitalize(breadCrumbArr.at(-1))} | Artisan` },
+      { property: 'og:description', content: `Explore trending products in the ${kebabToCapitalize(breadCrumbArr.at(-1))} category.` },
+      { property: 'og:image', content: 'https://artisanzen.vercel.app/logo.png' },
+      { property: 'og:url', content: `https://artisanzen.vercel.app/category/${kebabToCapitalize(breadCrumbArr.at(-1))}` },
+
+      // Twitter
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: `${kebabToCapitalize(breadCrumbArr.at(-1))} | Artisan` },
+      { name: 'twitter:description', content: `Explore trending products in the ${kebabToCapitalize(breadCrumbArr.at(-1))} category.` },
+      { name: 'twitter:image', content: 'https://artisanzen.vercel.app/logo.png' }
+    ]
+  })
   
 </script>
 
@@ -252,7 +286,7 @@
         <div class="category-name search-name" v-else>
           <span>Search results for </span>{{ props.sQuery }}
         </div>
-        <div class="view-settings">
+        <div class="view-settings" v-if="false">
           <div class="settings-icon" @click="isSettingsOpen = !isSettingsOpen">
             <Icon name="mdi:settings" size="24" color="#000000"/>
           </div>

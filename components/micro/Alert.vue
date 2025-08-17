@@ -70,7 +70,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 999;
+  z-index: 9999999;
   @include d-flex(column,flex-start,stretch);
   @media (max-width: 480px) {
     padding: 1px;
@@ -90,12 +90,13 @@
     @include d-flex(row,flex-start,center);
     margin: 0 0 10px 0;
     gap: 10px;
-    padding: 15px 10px;
+    padding: 18px 15px;
     color: #fff;
     font-weight: normal;
     border-radius: 4px;
     font-size: 16px;
     width: 450px;
+    z-index: 9999;
     @media (max-width: 480px) {
       width: 100%;
       padding: 9px 5px;

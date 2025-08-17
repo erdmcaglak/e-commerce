@@ -9,8 +9,8 @@
   }
 
   const setBasketItemCount = () =>{
-    if(window.localStorage.getItem('basket-items')){
-      basketItemCount.value = JSON.parse(window.localStorage.getItem('basket-items'))?.reduce((a,b)=>a+b.quantity,0) || 0
+    if(window.localStorage.getItem('basket-products')){
+      basketItemCount.value = JSON.parse(window.localStorage.getItem('basket-products'))?.reduce((a,b)=>a+b.quantity,0) || 0
     }
     else{
       basketItemCount.value = 0;

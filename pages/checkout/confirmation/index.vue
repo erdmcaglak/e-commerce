@@ -44,7 +44,7 @@ onMounted(()=>{
     taxId.value = '#'+JSON.parse(localStorage.getItem('taxId'))
     localStorage.removeItem('taxId');
     localStorage.removeItem('tryCount');
-    localStorage.removeItem('basket-items')
+    localStorage.removeItem('basket-products')
     setBasketItemCount();
   }
 })

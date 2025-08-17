@@ -1,9 +1,11 @@
 <script setup>
   import {ref,watch,computed} from 'vue'
   import {priceFixer,customHttp,generateTaxId} from "@/utils/utils"
+  import { useRoute } from 'vue-router'
 
   const { alert, setAlert } = inject('alert')
   const router = useRouter();
+  const route = useRoute()
   const models = ref({
     name:'',
     lastName:'',
@@ -33,7 +35,11 @@
   ]
 
   onMounted(()=>{
-    cartItems.value = JSON.parse(window.localStorage.getItem('basket-items'))
+    cartItems.value = JSON.parse(window.localStorage.getItem('basket-products'))
+
+    if(!window.localStorage.getItem('basket-products') || JSON.parse(window.localStorage.getItem('basket-products'))?.length === 0 ){
+      router.push('/')
+    }
   })
 
   const checkRequireInputs = (inputs) =>{
@@ -50,7 +56,7 @@
   }
 
   const getTotalItems = () =>{
-    return cartItems.value.reduce((a,b)=> a+b.quantity ,0)
+    return cartItems.value?.reduce((a,b)=> a+b.quantity ,0) || 0;
   }
 
   const continueToPayment = async () =>{
@@ -59,8 +65,6 @@
       return;
     }
     
-    await customHttp(200);
-
     localStorage.setItem('taxId',JSON.stringify(generateTaxId(16)));
 
     router.push('/checkout/confirmation');
@@ -70,18 +74,43 @@
   }
 
   const getSubTotal = computed(() => {
-    return cartItems.value.reduce((a,b) => a + parseFloat((b.quantity * b.item.price).toFixed(2)) ,0)
+    return cartItems.value?.reduce((a,b) => a + parseFloat((b.quantity * b.item.price).toFixed(2)) ,0) || 0;
   })
 
   const calculateDelivery = computed(()=>{
-    let totalOldPrice = cartItems.value.reduce((a,b) => a + parseFloat(b.item.oldPrice) ,0)
-    let totalPrice = cartItems.value.reduce((a,b) => a + parseFloat(b.item.price) ,0)
+    let totalOldPrice = cartItems.value?.reduce((a,b) => a + parseFloat(b.item.oldPrice) ,0) || 0;
+    let totalPrice = cartItems.value?.reduce((a,b) => a + parseFloat(b.item.price) ,0) || 0;
 
-    return parseFloat(((totalOldPrice - totalPrice) / (cartItems.value.length + 1)).toFixed(2))
+    return parseFloat(((totalOldPrice - totalPrice) / ((cartItems.value?.length || 0) + 1)).toFixed(2))
   })
 
   const getGrandTotal = computed(()=>{
-    return (getSubTotal.value + calculateDelivery.value)
+    return (getSubTotal.value + calculateDelivery.value) * (route.query.dc === 'artisan' ? 0.9 : 1);
+  })
+
+  const getDiscount = computed(()=>{
+    return (getSubTotal.value + calculateDelivery.value) * 0.1;
+  })
+
+
+  useHead({
+    title: 'Complete Your Order',
+    meta: [
+      { name: 'description', content: 'Review your cart and complete your purchase securely with Artisan.' },
+
+      // Open Graph
+      { property: 'og:type', content: 'website' },
+      { property: 'og:title', content: 'Complete Your Order | Artisan' },
+      { property: 'og:description', content: 'Review your cart and complete your purchase securely with Artisan.' },
+      { property: 'og:image', content: 'https://artisanzen.vercel.app/logo.png' },
+      { property: 'og:url', content: 'https://artisanzen.vercel.app/checkout' },
+
+      // Twitter
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Complete Your Order | Artisan' },
+      { name: 'twitter:description', content: 'Review your cart and complete your purchase securely with Artisan.' },
+      { name: 'twitter:image', content: 'https://artisanzen.vercel.app/logo.png' }
+    ]
   })
 </script>
 
@@ -158,7 +187,7 @@
       <div class="info-area-header">
         <h3>Your Order Info</h3> <span class="count-info">{{getTotalItems()}} items</span>
       </div>
-      <Cart
+      <BasketCart
         v-for="(item,i) in cartItems"
         :key="'checkoutItem'+i + item.id"
         row
@@ -180,6 +209,10 @@
         <div class="delivery-total price-info">
           <span class="title">Delivery</span>
           <span class="price">{{priceFixer(calculateDelivery)}}</span>
+        </div>
+        <div v-if="route.query.dc === 'artisan'" class="delivery-total price-info">
+          <span class="title">Discount</span>
+          <span class="price">{{priceFixer(getDiscount)}}</span>
         </div>
         <div class="grand-total price-info">
           <span class="title">Total</span>

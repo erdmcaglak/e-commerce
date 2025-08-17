@@ -90,6 +90,7 @@
 
 <style lang="scss">
 .slider-wrapper{
+  margin: 10px auto;
   width: 100%;
   position: relative;
   min-height: 500px;

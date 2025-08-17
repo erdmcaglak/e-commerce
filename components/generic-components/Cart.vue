@@ -1,6 +1,8 @@
 <script setup>
   import {priceFixer} from "@/utils/utils"
 
+  defineEmits(['click'])
+
   const props = defineProps({
     small:{type:Boolean,default:false},
     image:{type:String,required:true},
@@ -22,7 +24,7 @@
 
 <template>
   <ClientOnly>
-    <NuxtLink :to="'/product/'+props.productId" :class="['cart-item-wrapper',props.class]">
+    <NuxtLink :to="'/product/'+props.productId" :class="['cart-item-wrapper',props.class]" @click="$emit('click')">
       <div v-if="Math.round((props.discount || 0)) > 0 && props.oldPrice && !props.small" class="cart-item-badge">
         %{{ Math.round(props.discount) }}
       </div>

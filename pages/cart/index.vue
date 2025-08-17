@@ -5,32 +5,26 @@
   const discountCoupon = ref('');
   const basketWidgetProds = await getProducts();
   const router = useRouter();
-
-  watch(basketProds,(newVal,oldVal)=>{
-    if(!oldVal) return;
-    
-    window.localStorage.setItem('basket-items',JSON.stringify(newVal || []));
-  },{
-    deep:true
-  })
-
-  onMounted(()=>{
-    basketProds.value = window.localStorage.getItem('basket-items') ? JSON.parse(window.localStorage.getItem('basket-items')) : undefined
-  })
+  const isDiscounted = ref(false);
+  const lastVisitWidgets = ref([]);
 
   const getSubTotal = computed(() => {
-    return basketProds.value.reduce((a,b) => a + parseFloat((b.quantity * b.item.price).toFixed(2)) ,0)
+    return basketProds.value?.reduce((a,b) => a + parseFloat((b.quantity * b.item.price).toFixed(2)) ,0) || 0
   })
 
   const calculateDelivery = computed(()=>{
-    let totalOldPrice = basketProds.value.reduce((a,b) => a + parseFloat(b.item.oldPrice) ,0)
-    let totalPrice = basketProds.value.reduce((a,b) => a + parseFloat(b.item.price) ,0)
+    let totalOldPrice = basketProds.value?.reduce((a,b) => a + parseFloat(b.item.oldPrice) ,0) || 0
+    let totalPrice = basketProds.value?.reduce((a,b) => a + parseFloat(b.item.price) ,0) || 0
 
     return parseFloat(((totalOldPrice - totalPrice) / (basketProds.value.length + 1)).toFixed(2))
   })
 
   const getGrandTotal = computed(()=>{
-    return (getSubTotal.value + calculateDelivery.value)
+    return (getSubTotal.value + calculateDelivery.value) * (isDiscounted.value ? 0.9 : 1);
+  })
+
+  const getDiscount = computed(()=>{
+    return (getSubTotal.value + calculateDelivery.value) * 0.1;
   })
 
   const removeItemFromBasket = (index) =>{
@@ -38,8 +32,59 @@
   }
 
   const checkout = () =>{
-    router.push('/checkout')
+    router.push({path:'/checkout',query: { dc: discountCoupon.value }})
   }
+
+  onMounted(()=>{
+    basketProds.value = window.localStorage.getItem('basket-products') ? JSON.parse(window.localStorage.getItem('basket-products')) : undefined;
+
+    if(!window.localStorage.getItem('last-visited')){
+      window.localStorage.setItem('last-visited',JSON.stringify([]))
+    }
+
+    let lastVisitedList = JSON.parse(window.localStorage.getItem('last-visited'));
+
+    lastVisitWidgets.value = lastVisitedList
+  })
+
+  watch(basketProds,(newVal,oldVal)=>{
+    if(!oldVal) return;
+    
+    window.localStorage.setItem('basket-products',JSON.stringify(newVal || []));
+  },{
+    deep:true
+  })
+
+  watch(discountCoupon,(newVal,oldVal)=>{
+    if(newVal === 'artisan'){
+      isDiscounted.value = true;
+    }
+    else{
+      isDiscounted.value = false;
+    }
+  },{
+    deep:true
+  })
+
+  useHead({
+    title: 'Complete Your Order',
+    meta: [
+      { name: 'description', content: 'Review your cart and complete your purchase securely with Artisan.' },
+
+      // Open Graph
+      { property: 'og:type', content: 'website' },
+      { property: 'og:title', content: 'Complete Your Order | Artisan' },
+      { property: 'og:description', content: 'Review your cart and complete your purchase securely with Artisan.' },
+      { property: 'og:image', content: 'https://artisanzen.vercel.app/logo.png' },
+      { property: 'og:url', content: 'https://artisanzen.vercel.app/checkout' },
+
+      // Twitter
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Complete Your Order | Artisan' },
+      { name: 'twitter:description', content: 'Review your cart and complete your purchase securely with Artisan.' },
+      { name: 'twitter:image', content: 'https://artisanzen.vercel.app/logo.png' }
+    ]
+  })
 </script>
 
 <template>
@@ -50,10 +95,10 @@
     <div class="products-and-info">
       <template v-if="basketProds.length > 0">
         <div class="basket-products">
-          <Cart
+          <BasketCart
             v-for="(basketItem,i) in basketProds"
-            :key="'basketItem' +i + item.id"
-            row
+            :key="'basketItem' +i + basketItem.item.id"
+            :row="true"
             v-model:quantity="basketItem.quantity"
             :stock="basketItem.item.stock"
             :options="basketItem.options"
@@ -93,6 +138,10 @@
               <span class="title">Delivery</span>
               <span class="price">{{priceFixer(calculateDelivery)}}</span>
             </div>
+            <div v-if="isDiscounted" class="delivery-total price-info">
+              <span class="title">Discount</span>
+              <span class="price">{{priceFixer(getDiscount)}}</span>
+            </div>
             <div class="grand-total price-info">
               <span class="title">Total</span>
               <span class="price">{{priceFixer(getGrandTotal)}}</span>
@@ -118,8 +167,13 @@
     </div>
     <Divider/>
     <Slider
-      sliderTitle="Complemantary Products"
+      :sliderTitle="basketProds.length > 0 ? 'Complemantary Products' : 'Our Picks'"
       :sliderList="basketWidgetProds"
+    />
+    <Slider
+      v-if="lastVisitWidgets.length > 0"
+      sliderTitle="Last Visited"
+      :sliderList="lastVisitWidgets"
     />
   </div>
 </template>
