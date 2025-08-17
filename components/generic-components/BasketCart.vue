@@ -171,9 +171,10 @@
       @include d-flex(row,flex-start,center);
       gap: 15px;
       @media screen and (max-width:600px) {
-        @include d-flex(column,flex-start,flex-end);
+        width: 100%;
+        @include d-flex(row,space-between,center);
       }
-      @media screen and (max-width:480px) {
+      @media screen and (max-width:360px) {
         @include d-flex(column,flex-start,flex-start);
       }
       .cart-item-price-wrapper{
