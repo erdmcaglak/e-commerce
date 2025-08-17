@@ -1,75 +1,100 @@
-# Nuxt 3 Minimal Starter
+# ArtisanZen
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+![Artisan Logo](https://artisanzen.vercel.app/logo.png)
 
-## Setup
+**ArtisanZen** is a modern e-commerce frontend built with **Vue 3** and **Nuxt 3**. This project is a **learning and practice project**, showcasing various e-commerce pages and functionality without a backend.
 
-Make sure to install the dependencies:
+---
+
+## Table of Contents
+
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Future Plans](#future-plans)
+- [License](#license)
+
+---
+
+## About the Project
+
+ArtisanZen was created to practice **frontend development** with Vue 3 and Nuxt 3.  
+It is a **dummy e-commerce frontend**, designed to simulate a complete shopping experience, but it does **not connect to a backend**.  
+
+This project helped the developer understand **routing, components, state management, and SEO/meta handling** in Nuxt 3.
+
+---
+
+## Features
+
+The project includes the following pages:
+
+- **Home Page:** Displays featured products and categories.
+- **Category Page:** Shows products within a selected category.
+- **Product Page:** Displays product details, images, and price.
+- **Search Page:** Allows searching for products (dummy implementation).
+- **Cart Page:** Shows selected products.
+- **Checkout Page:** Collects order details.
+- **Checkout Confirmation Page:** Displays a dummy confirmation after checkout.
+
+**Note:** All data is dummy and there is **no backend integration**.  
+
+---
+
+## Technologies Used
+
+- [Vue 3](https://vuejs.org/) - Frontend framework
+- [Nuxt 3](https://nuxt.com/) - Framework for SSR and routing
+- [Vite](https://vitejs.dev/) - Development server and build tool
+- [Node.js](https://nodejs.org/) - Runtime for development
+
+---
+
+## Getting Started
+
+To run the project locally:
 
 ```bash
-# npm
+# Install dependencies
 npm install
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+# Start the development server
 npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+Then open http://localhost:3000 in your browser.
 
-Build the application for production:
+**Note:** No environment variables or extra configuration are needed. 
 
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+## Project Structure
+```text
+artisanzen/
+├─ assets/           # Static assets (images, fonts, styles)
+├─ components/       # Vue components
+├─ pages/            # Nuxt pages (Home, Category, Product, Search, Cart, Checkout)
+├─ public/           # Public files like logo.png
+├─ nuxt.config.ts    # Nuxt configuration
+├─ package.json      # Project dependencies
 ```
 
-Locally preview production build:
+There are no critical files to be careful about. Everything is standard Nuxt 3 structure.
 
-```bash
-# npm
-npm run preview
 
-# pnpm
-pnpm run preview
 
-# yarn
-yarn preview
+## Future Plans
 
-# bun
-bun run preview
-```
+- This project is mostly completed as a practice project.
+- Only minor bug fixes may be applied in the future.
+- No backend or real product data will be added.
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## License
+
+This project is open source under the MIT License.
+
+## Contact / Contribution
+
+Feel free to fork the project, open issues, or contribute small improvements.
+Since this is a personal learning project, contributions are welcome but optional.
+
