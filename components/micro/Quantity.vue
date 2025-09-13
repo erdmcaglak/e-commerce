@@ -1,21 +1,28 @@
 <script setup>
   import {watch} from 'vue' 
+  
   const model = defineModel('model');
   const props = defineProps({
     min:{type:[Number,String],default:0},
     max:{type:[Number,String],default:100}
   })
-  const decreaseQuantity = () =>{
+  const decreaseQuantity = () => {
     model.value--;
   }
-  const increaseQuantity = () =>{
+  const increaseQuantity = () => {
     model.value++;
   }
 
-  watch(model,(newVal,oldVal)=>{
+  const handleBlur = () => {
+    if (!model.value) {
+      model.value = 1;
+    }
+  }
+
+  watch(model, (newVal, oldVal) => {    
     if(newVal < props.min) model.value = props.min
-    else if(newVal > props.max) model.value = props.max
-  })
+      else if(newVal > props.max) model.value = props.max
+    })
 </script>
 
 <template>
@@ -25,7 +32,7 @@
       icon="mdi:minus"
       @clickTrigger="decreaseQuantity"
     />
-    <input v-model="model" :min="min" :max="max" class="quantity-input" type="number">
+    <input v-model="model" :min="min" :max="max" @blur="handleBlur" class="quantity-input" type="number" pattern="[0-9]*" inputmode="numeric"/>
     <Button
       class="buttons"
       icon="mdi:plus"
